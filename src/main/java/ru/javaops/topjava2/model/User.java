@@ -16,8 +16,6 @@ import org.springframework.util.CollectionUtils;
 import ru.javaops.topjava2.HasIdAndEmail;
 import ru.javaops.topjava2.util.validation.NoHtml;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.*;
 
 @Entity
