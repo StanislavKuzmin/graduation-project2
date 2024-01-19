@@ -2,6 +2,7 @@ package ru.javaops.topjava2.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,9 +19,11 @@ import java.util.Objects;
 public class VoteId implements Serializable {
 
     @Column(name = "user_id")
+    @NotNull
     private Integer userId;
 
     @Column(name = "vote_date")
+    @NotNull
     private LocalDate voteDate;
 
     public VoteId(Integer userId, LocalDate voteDate) {

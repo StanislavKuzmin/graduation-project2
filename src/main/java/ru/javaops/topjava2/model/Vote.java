@@ -31,9 +31,8 @@ public class Vote {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Restaurant restaurant;
 
-    public Vote(User user, LocalDate voteDate) {
-        this.user = user;
-        this.id = new VoteId(user.getId(), voteDate);
+    public Vote(Integer userId, LocalDate voteDate) {
+        this.id = new VoteId(userId, voteDate);
     }
 
     @Override
