@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
-@Table(name = "restaurant_dish")
+@Table(name = "dish_date")
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
@@ -25,11 +25,6 @@ public class DishDate {
     @MapsId("dishId")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Dish dish;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "restaurant_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Restaurant restaurant;
 
     public DishDate(Dish dish, LocalDate date) {
         this.id = new DishDateId(dish.getId(), date);

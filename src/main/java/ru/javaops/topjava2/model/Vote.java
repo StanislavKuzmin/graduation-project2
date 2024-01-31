@@ -35,6 +35,10 @@ public class Vote {
         this.id = new VoteId(userId, voteDate);
     }
 
+    public Vote(VoteId voteId) {
+        this.id = voteId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

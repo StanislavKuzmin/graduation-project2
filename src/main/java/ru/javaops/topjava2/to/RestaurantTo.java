@@ -9,7 +9,7 @@ import ru.javaops.topjava2.util.validation.NoHtml;
 import java.time.LocalDate;
 
 @Value
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = "votesNumber")
 public class RestaurantTo extends NamedTo {
 
     @NotBlank

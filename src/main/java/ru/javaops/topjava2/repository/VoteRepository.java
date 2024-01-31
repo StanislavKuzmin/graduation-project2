@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
+import ru.javaops.topjava2.error.NotFoundException;
 import ru.javaops.topjava2.model.Vote;
 import ru.javaops.topjava2.model.VoteId;
 import ru.javaops.topjava2.to.RestaurantTo;
@@ -12,6 +13,7 @@ import ru.javaops.topjava2.to.RestaurantTo;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Transactional(readOnly = true)
 public interface VoteRepository extends JpaRepository<Vote, VoteId> {
@@ -43,5 +45,10 @@ public interface VoteRepository extends JpaRepository<Vote, VoteId> {
     @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT new ru.javaops.topjava2.to.RestaurantTo(v.restaurant.id, v.restaurant.name, v.restaurant.address, v.id.voteDate, count(v.restaurant.id))" +
             " FROM Vote v WHERE v.id.userId = :userId AND v.id.voteDate = current_date")
-    RestaurantTo getUserVoteToday(@Param("userId") int userId);
+    Optional<RestaurantTo> findUserVoteToday(@Param("userId") int userId);
+
+    default RestaurantTo getUserVoteToday(int userId) {
+        return findUserVoteToday(userId).orElseThrow(() -> new NotFoundException("The user has not voted yet"));
+    }
+
 }
