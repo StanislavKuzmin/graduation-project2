@@ -1,5 +1,6 @@
 package ru.javaops.topjava2.model;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -30,6 +31,7 @@ public class Restaurant extends NamedEntity implements HasId {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "restaurant_id", referencedColumnName = "id", nullable = false)
+    @Hidden
     private List<Dish> dishes;
 
     public Restaurant(Integer id, String name, String address) {

@@ -20,5 +20,4 @@ public interface RestaurantRepository extends BaseRepository<Restaurant> {
     default Restaurant getExistedByName(String name) {
         return findByNameIgnoringCase(name).orElseThrow(() -> new NotFoundException("Restaurant with name=" + name + " not found"));
     }
-
 }

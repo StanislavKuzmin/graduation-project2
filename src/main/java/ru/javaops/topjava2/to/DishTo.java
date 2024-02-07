@@ -16,7 +16,7 @@ public class DishTo extends NamedTo {
     @Column(name = "price", nullable = false)
     @NotNull
     @Range(max = 5000)
-    BigDecimal price;
+    Integer price;
 
     @Column(name = "calories", nullable = false)
     @NotNull
@@ -25,7 +25,7 @@ public class DishTo extends NamedTo {
 
     LocalDate date;
 
-    public DishTo(Integer id, String name, BigDecimal price, Integer calories, LocalDate date) {
+    public DishTo(Integer id, String name, Integer price, Integer calories, LocalDate date) {
         super(id, name);
         this.price = price;
         this.calories = calories;

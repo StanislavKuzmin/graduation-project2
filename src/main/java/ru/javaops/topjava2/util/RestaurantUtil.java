@@ -5,13 +5,11 @@ import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.to.RestaurantTo;
 
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @UtilityClass
 public class RestaurantUtil {
-
     public static List<RestaurantTo> addWithZeroVote(List<Restaurant> restaurants, List<RestaurantTo> restaurantTos) {
         if (restaurantTos == null) {
             return createWithZeroVoteTo(LocalDate.now(), restaurants);
@@ -26,7 +24,6 @@ public class RestaurantUtil {
         }
         return allWithVote;
     }
-
     private static List<RestaurantTo> createWithZeroVoteTo(LocalDate date, List<Restaurant> restaurants) {
         return restaurants.stream().map(r -> new RestaurantTo(r.id(), r.getName(), r.getAddress(), date, 0L))
                 .collect(Collectors.toList());

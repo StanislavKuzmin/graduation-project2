@@ -10,7 +10,7 @@ CREATE SEQUENCE global_seq START WITH 1;
 
 CREATE TABLE users
 (
-    id         INTEGER PRIMARY KEY DEFAULT nextval('global_seq'),
+    id         INTEGER DEFAULT nextval('global_seq') PRIMARY KEY,
     name       VARCHAR                           NOT NULL,
     email      VARCHAR                           NOT NULL,
     password   VARCHAR                           NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE user_role
 
 CREATE TABLE restaurant
 (
-    id      INTEGER PRIMARY KEY DEFAULT nextval('global_seq'),
+    id      INTEGER DEFAULT nextval('global_seq') PRIMARY KEY,
     name    VARCHAR NOT NULL,
     address VARCHAR NOT NULL,
     CONSTRAINT restaurant_unique_name_address_idx UNIQUE (name, address)
@@ -52,9 +52,9 @@ CREATE INDEX vote_restaurant_idx ON vote (restaurant_id);
 
 CREATE TABLE dish
 (
-    id            INTEGER PRIMARY KEY DEFAULT nextval('global_seq'),
+    id            INTEGER DEFAULT nextval('global_seq') PRIMARY KEY,
     name          VARCHAR        NOT NULL,
-    price         NUMERIC(10, 2) NOT NULL,
+    price         INTEGER        NOT NULL,
     calories      INTEGER        NOT NULL,
     restaurant_id INTEGER        NOT NULL,
     CONSTRAINT dish_restaurant_unique_name_idx UNIQUE (name, restaurant_id),
@@ -98,15 +98,15 @@ VALUES ('Kwakin', 'Zvenigorodskaya street, 2/44'),
        ('Dzamiko', 'Admiralteiskaya street, 2');
 
 INSERT INTO dish (name, price, calories, restaurant_id)
-VALUES ('roast', 2.99, 400, 5),
-       ('solyanka', 4.55, 300, 5),
-       ('beet soup', 5.62, 200, 5),
-       ('dressed herring', 3.23, 300, 6),
-       ('goulash', 6.12, 100, 6),
-       ('open sandwich', 2.15, 400, 6),
-       ('pizza', 4.64, 600, 7),
-       ('kebab', 7.31, 500, 7),
-       ('hot dog', 3.32, 200, 7);
+VALUES ('roast', 29900, 400, 5),
+       ('solyanka', 45005, 300, 5),
+       ('beet soup', 56002, 200, 5),
+       ('dressed herring', 32300, 300, 6),
+       ('goulash', 61002, 100, 6),
+       ('open sandwich', 21005, 400, 6),
+       ('pizza', 46400, 600, 7),
+       ('kebab', 73100, 500, 7),
+       ('hot dog', 33200, 200, 7);
 
 INSERT INTO vote (user_id, restaurant_id, vote_date)
 VALUES (1, 5, '2024-01-29'),

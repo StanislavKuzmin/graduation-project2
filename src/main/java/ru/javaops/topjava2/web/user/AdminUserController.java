@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.topjava2.model.User;
+import ru.javaops.topjava2.model.VoteId;
 import ru.javaops.topjava2.to.RestaurantTo;
 import ru.javaops.topjava2.web.AuthUser;
 
@@ -21,8 +22,7 @@ import java.util.List;
 
 import static ru.javaops.topjava2.util.DateUtil.atThisDayOrMax;
 import static ru.javaops.topjava2.util.DateUtil.atThisDayOrMin;
-import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsistent;
-import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
+import static ru.javaops.topjava2.util.validation.ValidationUtil.*;
 
 @RestController
 @RequestMapping(value = AdminUserController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -90,7 +90,8 @@ public class AdminUserController extends AbstractUserController {
 
     @GetMapping("/{id}/vote")
     public RestaurantTo getUserVoteToday(@PathVariable int id) {
-        return voteRepository.getUserVoteToday(id);
+        checkNotFoundWithId(repository.getExisted(id), id);
+        return voteRepository.getUserVoteToday(new VoteId(id, LocalDate.now()));
     }
 
     @GetMapping("/{id}/vote-history")

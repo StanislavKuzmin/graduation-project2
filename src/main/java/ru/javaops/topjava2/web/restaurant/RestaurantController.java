@@ -7,7 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import ru.javaops.topjava2.error.AppException;
+import ru.javaops.topjava2.error.DataConflictException;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.model.Vote;
 import ru.javaops.topjava2.model.VoteId;
@@ -18,12 +18,12 @@ import ru.javaops.topjava2.to.RestaurantTo;
 import ru.javaops.topjava2.web.AuthUser;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import static ru.javaops.topjava2.util.DateUtil.*;
-import static ru.javaops.topjava2.util.RestaurantUtil.*;
+import static ru.javaops.topjava2.util.DateUtil.atThisDayOrMax;
+import static ru.javaops.topjava2.util.DateUtil.atThisDayOrMin;
+import static ru.javaops.topjava2.util.RestaurantUtil.addWithZeroVote;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNotFoundWithId;
 
 @RestController
@@ -68,10 +68,9 @@ public class RestaurantController {
     }
 
     @GetMapping("/{id}/history-votes")
-    public List<RestaurantTo> getVoteHistory(
-            @RequestParam @Nullable LocalDate startDate,
-            @RequestParam @Nullable LocalDate endDate,
-            @PathVariable int id) {
+    public List<RestaurantTo> getVoteHistory(@RequestParam @Nullable LocalDate startDate,
+                                             @RequestParam @Nullable LocalDate endDate,
+                                             @PathVariable int id) {
         log.info("get vote history for restaurant with id={}", id);
         return voteRepository.getRestaurantHistoryBetweenOpen(atThisDayOrMin(startDate), atThisDayOrMax(endDate), id);
     }
@@ -83,19 +82,21 @@ public class RestaurantController {
     }
 
     @Transactional
-    @PostMapping(value = "/vote", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public RestaurantTo vote(@RequestParam int restaurantId) {
+    @PostMapping("/vote")
+    public Vote vote(@RequestParam int restaurantId) {
+        checkNotFoundWithId(restaurantRepository.getExisted(restaurantId), restaurantId);
         int userId = AuthUser.authId();
         VoteId voteId = new VoteId(userId, LocalDate.now());
         Vote vote = voteRepository.get(voteId);
         if (vote != null && LocalTime.now().isAfter(END_VOTE)) {
-            throw new AppException("You can't change your decision, because the time is more than 11.00");
+            throw new DataConflictException("You can't change your decision, because the time is more than 11.00");
         }
         Restaurant restaurant = restaurantRepository.getReferenceById(restaurantId);
         vote = checkUpdateOrCreate(userId, voteId, vote, restaurant);
         voteRepository.save(vote);
-        return voteRepository.getUserVoteToday(userId);
+        return vote;
     }
+
     private Vote checkUpdateOrCreate(int userId, VoteId voteId, Vote vote, Restaurant restaurant) {
         if (vote != null) {
             log.info("user with id={} changed his voice for restaurant with id={}", userId, restaurant.id());

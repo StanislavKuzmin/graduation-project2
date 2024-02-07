@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.topjava2.model.User;
+import ru.javaops.topjava2.model.VoteId;
 import ru.javaops.topjava2.to.RestaurantTo;
 import ru.javaops.topjava2.to.UserTo;
 import ru.javaops.topjava2.util.UsersUtil;
@@ -29,7 +30,6 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 @RestController
 @RequestMapping(value = ProfileController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
-// TODO: cache only most requested data!
 public class ProfileController extends AbstractUserController {
     static final String REST_URL = "/api/profile";
 
@@ -72,7 +72,7 @@ public class ProfileController extends AbstractUserController {
     @GetMapping("/vote")
     public RestaurantTo getVoteToday() {
         int userId = AuthUser.authId();
-        return voteRepository.getUserVoteToday(userId);
+        return voteRepository.getUserVoteToday(new VoteId(userId, LocalDate.now()));
     }
 
     @GetMapping("/vote-history")
@@ -81,5 +81,4 @@ public class ProfileController extends AbstractUserController {
         int userId = AuthUser.authId();
         return voteRepository.getUserVoteHistoryBetweenOpen(atThisDayOrMin(startDate), atThisDayOrMax(endDate), userId);
     }
-
 }
