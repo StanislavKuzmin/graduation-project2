@@ -12,22 +12,27 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
-@Table(name = "dish_date")
+@Table(name = "menu")
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-public class DishDate {
+public class Menu {
 
     @EmbeddedId
-    private DishDateId id;
+    private MenuId id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @MapsId("dishId")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Dish dish;
 
-    public DishDate(Dish dish, LocalDate date) {
-        this.id = new DishDateId(dish.getId(), date);
+    public Menu(Dish dish, LocalDate date) {
+        this.id = new MenuId(dish.getId(), date);
+        this.dish = dish;
+    }
+
+    public Menu(MenuId menuId, Dish dish) {
+        this.id = menuId;
         this.dish = dish;
     }
 
@@ -35,8 +40,8 @@ public class DishDate {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        DishDate dishDate = (DishDate) o;
-        return Objects.equals(id, dishDate.id);
+        Menu menu = (Menu) o;
+        return Objects.equals(id, menu.id);
     }
 
     @Override

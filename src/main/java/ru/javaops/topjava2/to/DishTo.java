@@ -6,7 +6,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.hibernate.validator.constraints.Range;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Value

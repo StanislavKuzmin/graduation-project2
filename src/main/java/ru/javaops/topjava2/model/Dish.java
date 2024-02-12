@@ -12,8 +12,6 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.Range;
 import ru.javaops.topjava2.HasId;
 
-import java.math.BigDecimal;
-
 @Entity
 @Table(name = "dish")
 @Getter

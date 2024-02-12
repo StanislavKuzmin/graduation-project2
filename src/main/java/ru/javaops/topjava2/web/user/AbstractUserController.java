@@ -6,7 +6,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import ru.javaops.topjava2.model.User;
 import ru.javaops.topjava2.repository.UserRepository;
-import ru.javaops.topjava2.repository.VoteRepository;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -15,10 +14,6 @@ public abstract class AbstractUserController {
 
     @Autowired
     protected UserRepository repository;
-
-    @Autowired
-    protected VoteRepository voteRepository;
-
     @Autowired
     private UniqueMailValidator emailValidator;
 

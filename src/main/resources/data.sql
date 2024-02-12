@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS user_role;
-DROP TABLE IF EXISTS dish_date;
+DROP TABLE IF EXISTS menu;
 DROP TABLE IF EXISTS vote;
 DROP TABLE IF EXISTS dish;
 DROP TABLE IF EXISTS restaurant;
@@ -63,7 +63,7 @@ CREATE TABLE dish
 
 CREATE INDEX dish_restaurant_idx ON dish (restaurant_id);
 
-CREATE TABLE dish_date
+CREATE TABLE menu
 (
     dish_id INTEGER            NOT NULL,
     date    DATE DEFAULT CURRENT_DATE NOT NULL,
@@ -73,7 +73,7 @@ CREATE TABLE dish_date
 
 DELETE FROM user_role;
 DELETE FROM vote;
-DELETE FROM dish_date;
+DELETE FROM menu;
 DELETE FROM users;
 DELETE FROM dish;
 DELETE FROM restaurant;
@@ -119,7 +119,7 @@ VALUES (1, 5, '2024-01-29'),
        (4, 7, CURRENT_DATE);
 
 
-INSERT INTO dish_date (dish_id, date)
+INSERT INTO menu (dish_id, date)
 VALUES (8, '2024-01-29'),
        (9, '2024-01-29'),
        (10, '2024-01-29'),

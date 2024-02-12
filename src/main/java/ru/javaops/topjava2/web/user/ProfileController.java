@@ -6,24 +6,17 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.topjava2.model.User;
-import ru.javaops.topjava2.model.VoteId;
-import ru.javaops.topjava2.to.RestaurantTo;
 import ru.javaops.topjava2.to.UserTo;
 import ru.javaops.topjava2.util.UsersUtil;
 import ru.javaops.topjava2.web.AuthUser;
 
 import java.net.URI;
-import java.time.LocalDate;
-import java.util.List;
 
-import static ru.javaops.topjava2.util.DateUtil.atThisDayOrMax;
-import static ru.javaops.topjava2.util.DateUtil.atThisDayOrMin;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsistent;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 
@@ -31,7 +24,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 @RequestMapping(value = ProfileController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 public class ProfileController extends AbstractUserController {
-    static final String REST_URL = "/api/profile";
+    public static final String REST_URL = "/api/profile";
 
     @GetMapping
     public User get(@AuthenticationPrincipal AuthUser authUser) {
@@ -67,18 +60,5 @@ public class ProfileController extends AbstractUserController {
         assureIdConsistent(userTo, authUser.id());
         User user = authUser.getUser();
         repository.prepareAndSave(UsersUtil.updateFromTo(user, userTo));
-    }
-
-    @GetMapping("/vote")
-    public RestaurantTo getVoteToday() {
-        int userId = AuthUser.authId();
-        return voteRepository.getUserVoteToday(new VoteId(userId, LocalDate.now()));
-    }
-
-    @GetMapping("/vote-history")
-    public List<RestaurantTo> getVoteHistory(@RequestParam @Nullable LocalDate startDate,
-                                                 @RequestParam @Nullable LocalDate endDate) {
-        int userId = AuthUser.authId();
-        return voteRepository.getUserVoteHistoryBetweenOpen(atThisDayOrMin(startDate), atThisDayOrMax(endDate), userId);
     }
 }

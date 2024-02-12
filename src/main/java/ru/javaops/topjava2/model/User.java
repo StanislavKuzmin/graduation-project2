@@ -10,9 +10,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.util.CollectionUtils;
 import ru.javaops.topjava2.HasIdAndEmail;
@@ -20,7 +18,6 @@ import ru.javaops.topjava2.util.validation.NoHtml;
 
 import java.util.*;
 
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "users")
 @Getter
@@ -50,7 +47,6 @@ public class User extends NamedEntity implements HasIdAndEmail {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date registered = new Date();
 
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),

@@ -15,7 +15,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-public class DishDateId implements Serializable {
+public class MenuId implements Serializable {
 
     @Column(name = "dish_id")
     private Integer dishId;
@@ -23,7 +23,7 @@ public class DishDateId implements Serializable {
     @Column(name = "date")
     private LocalDate date;
 
-    public DishDateId(Integer dishId, LocalDate date) {
+    public MenuId(Integer dishId, LocalDate date) {
         this.dishId = dishId;
         this.date = date;
     }
@@ -32,7 +32,7 @@ public class DishDateId implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        DishDateId that = (DishDateId) o;
+        MenuId that = (MenuId) o;
         return Objects.equals(dishId, that.dishId) && Objects.equals(date, that.date);
     }
 
