@@ -12,7 +12,7 @@ import ru.javaops.topjava2.model.Menu;
 import ru.javaops.topjava2.model.MenuId;
 import ru.javaops.topjava2.repository.DishRepository;
 import ru.javaops.topjava2.repository.MenuRepository;
-import ru.javaops.topjava2.to.DishTo;
+import ru.javaops.topjava2.to.MenuTo;
 import ru.javaops.topjava2.web.restaurant.AdminRestaurantController;
 
 import java.time.LocalDate;
@@ -24,6 +24,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNotFoundWi
 @RequestMapping(value = AdminRestaurantController.REST_URL + AdminMenuController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 public class AdminMenuController {
+
     public static final String REST_URL = "/{restaurantId}/menu";
     private final DishRepository dishRepository;
     private final MenuRepository menuRepository;
@@ -69,20 +70,20 @@ public class AdminMenuController {
     @Transactional
     @PostMapping(value = "/copy")
     public List<Menu> copyMenuFromDate(@PathVariable int restaurantId, @RequestParam LocalDate localDate) {
-        List<DishTo> dishTos = menuRepository.getRestaurantMenuHistory(localDate, restaurantId);
-        if (dishTos != null) {
+        List<MenuTo> menuTos = menuRepository.getRestaurantMenuHistory(localDate, restaurantId);
+        if (menuTos != null) {
             log.info("Copy menu from date= {} to today menu", localDate);
-            List<Menu> todayMenu = createTodayMenu(restaurantId, dishTos);
+            List<Menu> todayMenu = createTodayMenu(restaurantId, menuTos);
             menuRepository.saveAll(todayMenu);
             return todayMenu;
         }
         throw new NotFoundException("There is no menu to copy for the selected date " + localDate);
     }
 
-    private List<Menu> createTodayMenu(int restaurantId, List<DishTo> dishTos) {
-        return dishTos.stream()
-                .map(dt -> {
-                    Dish dish = new Dish(dt.id(), dt.getName(), dt.getPrice(), dt.getCalories());
+    private List<Menu> createTodayMenu(int restaurantId, List<MenuTo> menuTos) {
+        return menuTos.stream()
+                .map(m -> {
+                    Dish dish = new Dish(m.dish().id(), m.dish().getName(), m.dish().getPrice(), m.dish().getCalories());
                     dish.setRestaurantId(restaurantId);
                     return new Menu(dish, LocalDate.now());
                 })

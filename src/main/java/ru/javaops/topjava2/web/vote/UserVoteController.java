@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.javaops.topjava2.model.VoteId;
 import ru.javaops.topjava2.repository.VoteRepository;
-import ru.javaops.topjava2.to.RestaurantTo;
+import ru.javaops.topjava2.to.VoteTo;
 import ru.javaops.topjava2.web.AuthUser;
 import ru.javaops.topjava2.web.user.ProfileController;
 
@@ -31,14 +31,14 @@ public class UserVoteController {
     }
 
     @GetMapping("/today")
-    public RestaurantTo getVoteToday() {
+    public VoteTo getVoteToday() {
         int userId = AuthUser.authId();
         log.info("get vote today for user with id={}", userId);
         return voteRepository.getUserVoteToday(new VoteId(userId, LocalDate.now()));
     }
 
     @GetMapping("/history")
-    public List<RestaurantTo> getVoteHistory(@RequestParam @Nullable LocalDate startDate,
+    public List<VoteTo> getVoteHistory(@RequestParam @Nullable LocalDate startDate,
                                              @RequestParam @Nullable LocalDate endDate) {
         int userId = AuthUser.authId();
         log.info("get vote history for user with id={}", userId);

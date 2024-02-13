@@ -6,13 +6,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javaops.topjava2.model.Dish;
+import ru.javaops.topjava2.to.DishTo;
 
 import java.util.List;
 
 @Transactional(readOnly = true)
 public interface DishRepository extends JpaRepository<Dish, Integer> {
-    @Query("SELECT d FROM Dish d WHERE d.restaurantId =:restaurantId ORDER BY d.price ASC")
-    List<Dish> getAll(@Param("restaurantId") int restaurantId);
+    @Query("SELECT new ru.javaops.topjava2.to.DishTo(d.id, d.name, d.price, d.calories)" +
+            " FROM Dish d WHERE d.restaurantId =:restaurantId ORDER BY d.price ASC")
+    List<DishTo> getAll(@Param("restaurantId") int restaurantId);
 
     default Dish get(int id, int restaurantId) {
         return findById(id)

@@ -14,7 +14,7 @@ import ru.javaops.topjava2.model.VoteId;
 import ru.javaops.topjava2.repository.RestaurantRepository;
 import ru.javaops.topjava2.repository.UserRepository;
 import ru.javaops.topjava2.repository.VoteRepository;
-import ru.javaops.topjava2.to.RestaurantTo;
+import ru.javaops.topjava2.to.VoteTo;
 import ru.javaops.topjava2.web.AuthUser;
 import ru.javaops.topjava2.web.restaurant.RestaurantController;
 
@@ -50,15 +50,15 @@ public class RestaurantVoteController {
     }
 
     @GetMapping("/today")
-    public List<RestaurantTo> getAllVoteToday() {
+    public List<VoteTo> getAllVoteToday() {
         log.info("getAllVoteToday");
         return addWithZeroVote(restaurantRepository.findAll(), voteRepository.getRestaurantsToday());
     }
 
-    @GetMapping("/history")
-    public List<RestaurantTo> getVoteHistory(@RequestParam @Nullable LocalDate startDate,
-                                             @RequestParam @Nullable LocalDate endDate,
-                                             @RequestParam int id) {
+    @GetMapping("{id}/history")
+    public List<VoteTo> getVoteHistory(@RequestParam @Nullable LocalDate startDate,
+                                       @RequestParam @Nullable LocalDate endDate,
+                                       @PathVariable int id) {
         log.info("get vote history for restaurant with id={}", id);
         return voteRepository.getRestaurantHistoryBetweenOpen(atThisDayOrMin(startDate), atThisDayOrMax(endDate), id);
     }

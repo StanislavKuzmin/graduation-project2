@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javaops.topjava2.error.NotFoundException;
 import ru.javaops.topjava2.model.Vote;
 import ru.javaops.topjava2.model.VoteId;
-import ru.javaops.topjava2.to.RestaurantTo;
+import ru.javaops.topjava2.to.VoteTo;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,36 +23,36 @@ public interface VoteRepository extends JpaRepository<Vote, VoteId> {
     }
 
     @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
-    @Query("SELECT new ru.javaops.topjava2.to.RestaurantTo(v.restaurant.id, v.restaurant.name, v.restaurant.address, v.id.voteDate, count(v.restaurant.id))" +
+    @Query("SELECT new ru.javaops.topjava2.to.VoteTo(v.id.voteDate, count(v.restaurant.id), v.restaurant)" +
                  " FROM Vote v WHERE v.restaurant.id = :restaurantId AND v.id.voteDate >= :startDate AND v.id.voteDate <= :endDate" +
                  " GROUP BY v.id.voteDate, v.restaurant" +
                  " ORDER BY v.id.voteDate DESC")
-    List<RestaurantTo> getRestaurantHistoryBetweenOpen(@Param("startDate") LocalDate startDate,
+    List<VoteTo> getRestaurantHistoryBetweenOpen(@Param("startDate") LocalDate startDate,
                                                        @Param("endDate") LocalDate endDate,
                                                        @Param("restaurantId") int restaurantId);
 
     @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
-    @Query("SELECT new ru.javaops.topjava2.to.RestaurantTo(v.restaurant.id, v.restaurant.name, v.restaurant.address, v.id.voteDate, count(v.restaurant.id))" +
+    @Query("SELECT new ru.javaops.topjava2.to.VoteTo(v.id.voteDate, v.restaurant)" +
             " FROM Vote v WHERE v.id.userId = :userId AND v.id.voteDate >= :startDate AND v.id.voteDate <= :endDate" +
             " GROUP BY v.id.voteDate, v.restaurant" +
             " ORDER BY v.id.voteDate DESC")
-    List<RestaurantTo> getUserVoteHistoryBetweenOpen(@Param("startDate") LocalDate startDate,
-                                                     @Param("endDate") LocalDate endDate,
-                                                     @Param("userId") int userId);
+    List<VoteTo> getUserVoteHistoryBetweenOpen(@Param("startDate") LocalDate startDate,
+                                               @Param("endDate") LocalDate endDate,
+                                               @Param("userId") int userId);
 
     @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
-    @Query("SELECT new ru.javaops.topjava2.to.RestaurantTo(v.restaurant.id, v.restaurant.name, v.restaurant.address, v.id.voteDate, count(v.restaurant.id))" +
+    @Query("SELECT new ru.javaops.topjava2.to.VoteTo(v.id.voteDate, count(v.restaurant.id), v.restaurant)" +
             " FROM Vote v WHERE v.id.voteDate = current_date" +
             " GROUP BY v.restaurant")
-    List<RestaurantTo> getRestaurantsToday();
+    List<VoteTo> getRestaurantsToday();
 
     @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
-    @Query("SELECT new ru.javaops.topjava2.to.RestaurantTo(v.restaurant.id, v.restaurant.name, v.restaurant.address, v.id.voteDate, count(v.restaurant.id))" +
+    @Query("SELECT new ru.javaops.topjava2.to.VoteTo(v.id.voteDate, v.restaurant)" +
             " FROM Vote v WHERE v.id = :id" +
             " GROUP BY v.restaurant")
-    Optional<RestaurantTo> findUserVoteToday(@Param("id") VoteId id);
+    Optional<VoteTo> findUserVoteToday(@Param("id") VoteId id);
 
-    default RestaurantTo getUserVoteToday(VoteId id) {
+    default VoteTo getUserVoteToday(VoteId id) {
         return findUserVoteToday(id).orElseThrow(() -> new NotFoundException("The user has not voted yet"));
     }
 

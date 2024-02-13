@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.repository.DishRepository;
+import ru.javaops.topjava2.to.DishTo;
 import ru.javaops.topjava2.web.restaurant.RestaurantController;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class DishController {
     }
 
     @GetMapping
-    public List<Dish> getAll(@PathVariable int restaurantId) {
+    public List<DishTo> getAll(@PathVariable int restaurantId) {
         log.info("getAll");
         return dishRepository.getAll(restaurantId);
     }

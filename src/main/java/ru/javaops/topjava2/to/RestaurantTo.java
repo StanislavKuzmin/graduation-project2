@@ -6,10 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import ru.javaops.topjava2.util.validation.NoHtml;
 
-import java.time.LocalDate;
-
 @Value
-@EqualsAndHashCode(callSuper = true, exclude = "votesNumber")
+@EqualsAndHashCode(callSuper = true)
 public class RestaurantTo extends NamedTo {
 
     @NotBlank
@@ -17,15 +15,9 @@ public class RestaurantTo extends NamedTo {
     @NoHtml
     String address;
 
-    LocalDate voteDate;
-
-    Long votesNumber;
-
-    public RestaurantTo(Integer id, String name, String address, LocalDate voteDate, Long votesNumber) {
+    public RestaurantTo(Integer id, String name, String address) {
         super(id, name);
         this.address = address;
-        this.voteDate = voteDate;
-        this.votesNumber = votesNumber;
     }
 
     @Override

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.javaops.topjava2.model.VoteId;
 import ru.javaops.topjava2.repository.UserRepository;
 import ru.javaops.topjava2.repository.VoteRepository;
-import ru.javaops.topjava2.to.RestaurantTo;
+import ru.javaops.topjava2.to.VoteTo;
 import ru.javaops.topjava2.web.user.AdminUserController;
 
 import java.time.LocalDate;
@@ -31,14 +31,14 @@ public class AdminVoteController {
     }
 
     @GetMapping("/today")
-    public RestaurantTo getUserVoteToday(@PathVariable int id) {
+    public VoteTo getUserVoteToday(@PathVariable int id) {
         checkNotFoundWithId(userRepository.getExisted(id), id);
         log.info("get vote today for user with id={}", id);
         return voteRepository.getUserVoteToday(new VoteId(id, LocalDate.now()));
     }
 
     @GetMapping("/history")
-    public List<RestaurantTo> getUserVoteHistory(@RequestParam @Nullable LocalDate startDate,
+    public List<VoteTo> getUserVoteHistory(@RequestParam @Nullable LocalDate startDate,
                                                  @RequestParam @Nullable LocalDate endDate,
                                                  @PathVariable int id) {
         checkNotFoundWithId(userRepository.getExisted(id), id);

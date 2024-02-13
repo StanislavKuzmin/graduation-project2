@@ -6,8 +6,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.hibernate.validator.constraints.Range;
 
-import java.time.LocalDate;
-
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class DishTo extends NamedTo {
@@ -22,13 +20,10 @@ public class DishTo extends NamedTo {
     @Range(min = 10, max = 5000)
     Integer calories;
 
-    LocalDate date;
-
-    public DishTo(Integer id, String name, Integer price, Integer calories, LocalDate date) {
+    public DishTo(Integer id, String name, Integer price, Integer calories) {
         super(id, name);
         this.price = price;
         this.calories = calories;
-        this.date = date;
     }
 
     @Override
