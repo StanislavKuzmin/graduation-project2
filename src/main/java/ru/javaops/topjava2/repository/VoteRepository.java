@@ -31,8 +31,8 @@ public interface VoteRepository extends JpaRepository<Vote, VoteId> {
                                                        @Param("endDate") LocalDate endDate,
                                                        @Param("restaurantId") int restaurantId);
 
-    @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
-    @Query("SELECT new ru.javaops.topjava2.to.VoteTo(v.id.voteDate, v.restaurant)" +
+    @EntityGraph(attributePaths = {"user", "restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
+    @Query("SELECT new ru.javaops.topjava2.to.VoteTo(v.id.voteDate, v.user, v.restaurant)" +
             " FROM Vote v WHERE v.id.userId = :userId AND v.id.voteDate >= :startDate AND v.id.voteDate <= :endDate" +
             " GROUP BY v.id.voteDate, v.restaurant" +
             " ORDER BY v.id.voteDate DESC")
@@ -42,12 +42,12 @@ public interface VoteRepository extends JpaRepository<Vote, VoteId> {
 
     @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT new ru.javaops.topjava2.to.VoteTo(v.id.voteDate, count(v.restaurant.id), v.restaurant)" +
-            " FROM Vote v WHERE v.id.voteDate = current_date" +
+            " FROM Vote v WHERE v.id.voteDate = :date" +
             " GROUP BY v.restaurant")
-    List<VoteTo> getRestaurantsToday();
+    List<VoteTo> getRestaurantsToday(@Param("date") LocalDate date);
 
-    @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
-    @Query("SELECT new ru.javaops.topjava2.to.VoteTo(v.id.voteDate, v.restaurant)" +
+    @EntityGraph(attributePaths = {"user", "restaurant"}, type = EntityGraph.EntityGraphType.LOAD)
+    @Query("SELECT new ru.javaops.topjava2.to.VoteTo(v.id.voteDate, v.user, v.restaurant)" +
             " FROM Vote v WHERE v.id = :id" +
             " GROUP BY v.restaurant")
     Optional<VoteTo> findUserVoteToday(@Param("id") VoteId id);

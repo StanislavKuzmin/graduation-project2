@@ -18,13 +18,14 @@ import ru.javaops.topjava2.to.VoteTo;
 import ru.javaops.topjava2.web.AuthUser;
 import ru.javaops.topjava2.web.restaurant.RestaurantController;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
 import static ru.javaops.topjava2.util.DateUtil.atThisDayOrMax;
 import static ru.javaops.topjava2.util.DateUtil.atThisDayOrMin;
-import static ru.javaops.topjava2.util.RestaurantUtil.addWithZeroVote;
+import static ru.javaops.topjava2.util.VoteUtil.addWithZeroVote;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNotFoundWithId;
 
 @RestController
@@ -38,24 +39,27 @@ public class RestaurantVoteController {
     private final VoteRepository voteRepository;
     private final UserRepository userRepository;
     private final CacheManager cacheManager;
+    private final Clock clock;
 
     public RestaurantVoteController(RestaurantRepository restaurantRepository,
                                     VoteRepository voteRepository,
                                     UserRepository userRepository,
-                                    CacheManager cacheManager) {
+                                    CacheManager cacheManager,
+                                    Clock clock) {
         this.restaurantRepository = restaurantRepository;
         this.voteRepository = voteRepository;
         this.userRepository = userRepository;
         this.cacheManager = cacheManager;
+        this.clock = clock;
     }
 
     @GetMapping("/today")
     public List<VoteTo> getAllVoteToday() {
         log.info("getAllVoteToday");
-        return addWithZeroVote(restaurantRepository.findAll(), voteRepository.getRestaurantsToday());
+        return addWithZeroVote(restaurantRepository.findAll(), voteRepository.getRestaurantsToday(LocalDate.now(clock)));
     }
 
-    @GetMapping("{id}/history")
+    @GetMapping("/{id}/history")
     public List<VoteTo> getVoteHistory(@RequestParam @Nullable LocalDate startDate,
                                        @RequestParam @Nullable LocalDate endDate,
                                        @PathVariable int id) {
@@ -68,14 +72,13 @@ public class RestaurantVoteController {
     public Vote vote(@RequestParam int restaurantId) {
         Restaurant restaurant = checkNotFoundWithId(getFromCacheOrRepo(restaurantId), restaurantId);
         int userId = AuthUser.authId();
-        VoteId voteId = new VoteId(userId, LocalDate.now());
+        VoteId voteId = new VoteId(userId, LocalDate.now(clock));
         Vote vote = voteRepository.get(voteId);
-        if (vote != null && LocalTime.now().isAfter(END_VOTE)) {
+        if (vote != null && LocalTime.now(clock).isAfter(END_VOTE)) {
             throw new DataConflictException("You can't change your decision, because the time is more than 11.00");
         }
         vote = checkUpdateOrCreate(userId, voteId, vote, restaurant);
-        voteRepository.save(vote);
-        return vote;
+        return voteRepository.save(vote);
     }
 
     private Restaurant getFromCacheOrRepo(int restaurantId) {

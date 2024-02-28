@@ -7,6 +7,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.topjava2.model.Restaurant;
@@ -24,13 +25,21 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 public class AdminRestaurantController {
     public static final String REST_URL = "/api/admin/restaurants";
     private final RestaurantRepository restaurantRepository;
+    private final UniqueNameAddressValidator validator;
 
-    public AdminRestaurantController(RestaurantRepository restaurantRepository) {
+    public AdminRestaurantController(RestaurantRepository restaurantRepository, UniqueNameAddressValidator validator) {
         this.restaurantRepository = restaurantRepository;
+        this.validator = validator;
+    }
+
+    @InitBinder
+    protected void initBinder(WebDataBinder binder) {
+        binder.addValidators(validator);
     }
 
     @CacheEvict(allEntries = true)
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
         log.info("delete {}", id);
         restaurantRepository.deleteExisted(id);
@@ -39,18 +48,18 @@ public class AdminRestaurantController {
     @CacheEvict(allEntries = true)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody Restaurant restaurant, int id) {
+    public void update( @RequestBody @Valid Restaurant restaurant, @PathVariable int id) {
         log.info("update {} with id={}", restaurant, id);
         assureIdConsistent(restaurant, id);
-        restaurantRepository.save(restaurant);
+        restaurantRepository.prepareAndSave(restaurant);
     }
 
     @CacheEvict(allEntries = true)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Restaurant> createWithLocation(@Valid @RequestBody Restaurant restaurant) {
+    public ResponseEntity<Restaurant> createWithLocation(@RequestBody @Valid Restaurant restaurant) {
         log.info("create {}", restaurant);
         checkNew(restaurant);
-        Restaurant created = restaurantRepository.save(restaurant);
+        Restaurant created = restaurantRepository.prepareAndSave(restaurant);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(RestaurantController.REST_URL + "/{id}")
                 .buildAndExpand(created.getId()).toUri();

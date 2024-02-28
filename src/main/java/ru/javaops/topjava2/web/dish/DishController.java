@@ -13,7 +13,7 @@ import ru.javaops.topjava2.web.restaurant.RestaurantController;
 
 import java.util.List;
 
-import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNotFoundWithId;
+import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNotFound;
 
 @RestController
 @RequestMapping(value = RestaurantController.REST_URL + DishController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -35,6 +35,6 @@ public class DishController {
     @GetMapping("/{id}")
     public Dish get(@PathVariable int restaurantId, @PathVariable int id) {
         log.info("get {}", id);
-        return checkNotFoundWithId(dishRepository.get(id, restaurantId), id);
+        return checkNotFound(dishRepository.get(id, restaurantId), "id=" + id + " or doesn't belong to entity with id=" + restaurantId);
     }
 }

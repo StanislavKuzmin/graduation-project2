@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.topjava2.model.Dish;
@@ -16,20 +17,29 @@ import java.net.URI;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.*;
 
 @RestController
-@RequestMapping(value = AdminRestaurantController.REST_URL + DishController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = AdminDishController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 public class AdminDishController {
-    private final DishRepository dishRepository;
 
-    public AdminDishController(DishRepository dishRepository) {
+    public static final String REST_URL = AdminRestaurantController.REST_URL + DishController.REST_URL;
+    private final DishRepository dishRepository;
+    private final UniqueNameValidator validator;
+
+    public AdminDishController(DishRepository dishRepository, UniqueNameValidator validator) {
         this.dishRepository = dishRepository;
+        this.validator = validator;
+    }
+
+    @InitBinder
+    protected void initBinder(WebDataBinder binder) {
+        binder.addValidators(validator);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int restaurantId, @PathVariable int id) {
         log.info("delete {}", id);
-        dishRepository.delete(id, restaurantId);
+        dishRepository.deleteExisted(id, restaurantId);
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -37,7 +47,7 @@ public class AdminDishController {
     public void update(@PathVariable int restaurantId, @Valid @RequestBody Dish dish, @PathVariable int id) {
         log.info("update {} with id={}", dish, id);
         assureIdConsistent(dish, id);
-        checkNotFoundWithId(dishRepository.saveSafety(dish, restaurantId), dish.getId());
+        checkNotFound(dishRepository.saveSafety(dish, restaurantId), "id=" + id + " or doesn't belong to entity with id=" + restaurantId);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -46,8 +56,8 @@ public class AdminDishController {
         checkNew(dish);
         Dish created = dishRepository.saveSafety(dish, restaurantId);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(DishController.REST_URL + "/{id}")
-                .buildAndExpand(created.getId()).toUri();
+                .path(REST_URL + "/{id}")
+                .buildAndExpand(created.getRestaurantId(), created.getId()).toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 }

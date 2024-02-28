@@ -18,4 +18,8 @@ public class UsersUtil {
         user.setPassword(userTo.getPassword());
         return user;
     }
+
+    public static UserTo createToWithoutPassword(User user) {
+        return new UserTo(user.id(), user.getName(), user.getEmail(), null);
+    }
 }

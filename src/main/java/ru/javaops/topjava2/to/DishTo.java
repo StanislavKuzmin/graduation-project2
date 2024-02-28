@@ -20,10 +20,13 @@ public class DishTo extends NamedTo {
     @Range(min = 10, max = 5000)
     Integer calories;
 
-    public DishTo(Integer id, String name, Integer price, Integer calories) {
+    Integer restaurantId;
+
+    public DishTo(Integer id, String name, Integer price, Integer calories, Integer restaurantId) {
         super(id, name);
         this.price = price;
         this.calories = calories;
+        this.restaurantId = restaurantId;
     }
 
     @Override

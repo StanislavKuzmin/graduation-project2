@@ -8,6 +8,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import ru.javaops.topjava2.HasId;
 import ru.javaops.topjava2.util.validation.NoHtml;
 
@@ -26,14 +28,19 @@ public class Restaurant extends NamedEntity implements HasId {
     @NoHtml
     private String address;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "restaurant_id", referencedColumnName = "id", nullable = false)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval=true)
+    @JoinColumn(name = "restaurant_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @Hidden
     private List<Dish> dishes;
 
     public Restaurant(Integer id, String name, String address) {
         super(id, name);
         this.address = address;
+    }
+
+    public Restaurant(Restaurant r) {
+        this(r.id(), r.name, r.address);
     }
 
     @Override

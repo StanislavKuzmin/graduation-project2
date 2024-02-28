@@ -18,11 +18,20 @@ public interface RestaurantRepository extends BaseRepository<Restaurant> {
     @Query("SELECT r FROM Restaurant r WHERE r.id=?1")
     Restaurant getWithDishes(int id);
 
-    @Query("SELECT r FROM Restaurant r WHERE r.name = LOWER(:name)")
-    Optional<Restaurant> findByNameIgnoringCase(String name);
+    @Query("SELECT r FROM Restaurant r WHERE r.name = :name")
+    Optional<Restaurant> findByName(String name);
+
+    @Query("SELECT r FROM Restaurant r WHERE r.name = LOWER(:name) AND r.address = LOWER(:address)")
+    Optional<Restaurant> findByNameAndAddress(String name, String address);
 
     default Restaurant getExistedByName(String name) {
-        return findByNameIgnoringCase(name).orElseThrow(() -> new NotFoundException("Restaurant with name=" + name + " not found"));
+        return findByName(name).orElseThrow(() -> new NotFoundException("Restaurant with name=" + name + " not found"));
+    }
+
+    default Restaurant prepareAndSave(Restaurant restaurant) {
+        restaurant.setName(restaurant.getName().toLowerCase());
+        restaurant.setAddress(restaurant.getAddress().toLowerCase());
+        return save(restaurant);
     }
 
     default List<RestaurantTo> getAll() {

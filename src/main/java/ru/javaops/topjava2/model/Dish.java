@@ -21,7 +21,7 @@ public class Dish extends NamedEntity implements HasId {
 
     @Column(name = "price", nullable = false)
     @NotNull
-    @Range(max = 5000)
+    @Range(min = 10000, max = 50000000)
     private Integer price;
 
     @Column(name = "calories", nullable = false)
@@ -29,7 +29,7 @@ public class Dish extends NamedEntity implements HasId {
     @Range(min = 10, max = 5000)
     private Integer calories;
 
-    @Column(name = "restaurant_id", insertable=false, updatable=false)
+    @Column(name = "restaurant_id")
     @Hidden
     private Integer restaurantId;
 
@@ -37,6 +37,10 @@ public class Dish extends NamedEntity implements HasId {
         super(id, name);
         this.price = price;
         this.calories = calories;
+    }
+
+    public Dish(Dish d) {
+        this(d.id(), d.name, d.price, d.calories);
     }
 
     @Override

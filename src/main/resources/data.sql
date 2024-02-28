@@ -93,9 +93,9 @@ VALUES ('USER', 1),
 
 
 INSERT INTO restaurant (name, address)
-VALUES ('Kwakin', 'Zvenigorodskaya street, 2/44'),
-       ('Market_Place', 'Nevskii avenue, 22'),
-       ('Dzamiko', 'Admiralteiskaya street, 2');
+VALUES ('kwakin', 'zvenigorodskaya street, 2/44'),
+       ('market_place', 'nevskii avenue, 22'),
+       ('dzamiko', 'admiralteiskaya street, 2');
 
 INSERT INTO dish (name, price, calories, restaurant_id)
 VALUES ('roast', 29900, 400, 5),
@@ -134,7 +134,6 @@ VALUES (8, '2024-01-29'),
        (15, '2024-01-30'),
        (16, '2024-01-30'),
        (8, CURRENT_DATE),
-       (10, CURRENT_DATE),
        (11, CURRENT_DATE),
        (13, CURRENT_DATE),
        (14, CURRENT_DATE),

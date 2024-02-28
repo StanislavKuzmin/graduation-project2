@@ -1,6 +1,5 @@
 package ru.javaops.topjava2.model;
 
-import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -25,7 +24,6 @@ public class Vote {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @MapsId("userId")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Hidden
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

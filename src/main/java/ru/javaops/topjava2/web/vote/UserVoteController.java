@@ -12,6 +12,7 @@ import ru.javaops.topjava2.to.VoteTo;
 import ru.javaops.topjava2.web.AuthUser;
 import ru.javaops.topjava2.web.user.ProfileController;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -25,16 +26,18 @@ public class UserVoteController {
 
     public static final String REST_URL = "/votes";
     private final VoteRepository voteRepository;
+    private final Clock clock;
 
-    public UserVoteController(VoteRepository voteRepository) {
+    public UserVoteController(VoteRepository voteRepository, Clock clock) {
         this.voteRepository = voteRepository;
+        this.clock = clock;
     }
 
     @GetMapping("/today")
     public VoteTo getVoteToday() {
         int userId = AuthUser.authId();
         log.info("get vote today for user with id={}", userId);
-        return voteRepository.getUserVoteToday(new VoteId(userId, LocalDate.now()));
+        return voteRepository.getUserVoteToday(new VoteId(userId, LocalDate.now(clock)));
     }
 
     @GetMapping("/history")
