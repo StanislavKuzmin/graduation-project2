@@ -6,14 +6,14 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.0.6</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
     <groupId>ru.javaops</groupId>
     <artifactId>topjava2</artifactId>
     <version>1.0</version>
 
     <name>Restaurant Voting Application</name>
-    <description>TopJava graduation project application</description>
+    <description>Graduation project application</description>
     <url>https://javaops.ru/view/topjava2</url>
 
     <properties>

@@ -1,5 +1,6 @@
 package ru.javaops.topjava2.web.vote;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNotFoundWi
 @RestController
 @RequestMapping(value = AdminUserController.REST_URL + AdminVoteController.REST_URL)
 @Slf4j
+@Tag(name = "Info about vote of users", description = "Get information about vote of all users")
 public class AdminVoteController {
 
     public static final String REST_URL = "/{id}/votes";

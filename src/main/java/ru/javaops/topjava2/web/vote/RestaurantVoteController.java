@@ -1,5 +1,6 @@
 package ru.javaops.topjava2.web.vote;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -31,6 +32,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNotFoundWi
 @RestController
 @RequestMapping(value = RestaurantController.REST_URL + RestaurantVoteController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
+@Tag(name = "Voting restaurant system", description = "Vote for the restaurant and get info about results of election today or in the past")
 public class RestaurantVoteController {
 
     public static final String REST_URL = "/votes";

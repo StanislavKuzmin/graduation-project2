@@ -23,7 +23,7 @@ class UserVoteControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "today"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(VOTE_TO6));
+                .andExpect(VOTE_TO_MATCHER.contentJson(voteTo6));
     }
 
     @Test
@@ -33,7 +33,7 @@ class UserVoteControllerTest extends AbstractControllerTest {
                 .param("startDate", "2024-01-29").param("endDate", "2024-01-30"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(VOTE_TO8, VOTE_TO7));
+                .andExpect(VOTE_TO_MATCHER.contentJson(voteTo8, voteTo7));
     }
 
     @Test
@@ -50,6 +50,6 @@ class UserVoteControllerTest extends AbstractControllerTest {
                 .param("endDate", "2024-01-30"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(VOTE_TO8, VOTE_TO7));
+                .andExpect(VOTE_TO_MATCHER.contentJson(voteTo8, voteTo7));
     }
 }

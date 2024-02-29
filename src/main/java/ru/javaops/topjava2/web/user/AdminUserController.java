@@ -1,5 +1,6 @@
 package ru.javaops.topjava2.web.user;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -22,6 +23,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 @RestController
 @RequestMapping(value = AdminUserController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @CacheConfig(cacheNames = "users")
+@Tag(name = "Admin", description = "Manage profiles of all users")
 public class AdminUserController extends AbstractUserController {
 
     public static final String REST_URL = "/api/admin/users";

@@ -1,5 +1,6 @@
 package ru.javaops.topjava2.web.dish;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNotFound;
 @RestController
 @RequestMapping(value = RestaurantController.REST_URL + DishController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
+@Tag(name = "Info about dishes of restaurants", description = "Read information about dishes of restaurants")
 public class DishController {
     static final String REST_URL = "/{restaurantId}/dishes";
     private final DishRepository dishRepository;

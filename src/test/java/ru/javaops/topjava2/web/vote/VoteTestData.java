@@ -17,14 +17,14 @@ public class VoteTestData {
                 throw new UnsupportedOperationException();
             });
     public static final MatcherFactory.Matcher<VoteTo> VOTE_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(VoteTo.class);
-    public static final VoteTo VOTE_TO1 = new VoteTo(LocalDate.of(2024, 1, 30), restaurant1);
-    public static final VoteTo VOTE_TO2 = new VoteTo(LocalDate.of(2024, 1, 30), 2L, restaurant2);
-    public static final VoteTo VOTE_TO3 = new VoteTo(LocalDate.of(2024, 1, 30), 1L, restaurant3);
-    public static final VoteTo VOTE_TO4 = new VoteTo(LocalDate.of(2024, 1, 29), 1L, restaurant2);
-    public static final VoteTo VOTE_TO5 = new VoteTo(LocalDate.of(2024, 1, 30), 2L, restaurant2);
-    public static final VoteTo VOTE_TO6 = new VoteTo(LocalDate.now(), another_user, restaurant3);
-    public static final VoteTo VOTE_TO7 = new VoteTo(LocalDate.of(2024, 1, 29), another_user, restaurant1);
-    public static final VoteTo VOTE_TO8 = new VoteTo(LocalDate.of(2024, 1, 30), another_user, restaurant3);
+    public static final VoteTo voteTo1 = new VoteTo(LocalDate.of(2024, 1, 30), restaurant1);
+    public static final VoteTo voteTo2 = new VoteTo(LocalDate.of(2024, 1, 30), 2L, restaurant2);
+    public static final VoteTo voteTo3 = new VoteTo(LocalDate.of(2024, 1, 30), 1L, restaurant3);
+    public static final VoteTo voteTo4 = new VoteTo(LocalDate.of(2024, 1, 29), 1L, restaurant2);
+    public static final VoteTo voteTo5 = new VoteTo(LocalDate.of(2024, 1, 30), 2L, restaurant2);
+    public static final VoteTo voteTo6 = new VoteTo(LocalDate.now(), another_user, restaurant3);
+    public static final VoteTo voteTo7 = new VoteTo(LocalDate.of(2024, 1, 29), another_user, restaurant1);
+    public static final VoteTo voteTo8 = new VoteTo(LocalDate.of(2024, 1, 30), another_user, restaurant3);
 
     public static Vote getNew() {
         Vote vote = new Vote(USER_ID, LocalDate.of(2024, 1, 31));

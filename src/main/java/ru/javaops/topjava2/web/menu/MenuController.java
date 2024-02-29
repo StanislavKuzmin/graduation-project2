@@ -1,5 +1,6 @@
 package ru.javaops.topjava2.web.menu;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = RestaurantController.REST_URL + MenuController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
+@Tag(name = "Info about menu of restaurants", description = "Read information about menu of restaurants today or in the past")
 public class MenuController {
     public static final String REST_URL = "/{restaurantId}/menu";
     private final MenuRepository menuRepository;

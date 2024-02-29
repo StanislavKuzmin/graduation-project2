@@ -71,7 +71,7 @@ class RestaurantVoteControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "today"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(VOTE_TO3, VOTE_TO1, VOTE_TO2));
+                .andExpect(VOTE_TO_MATCHER.contentJson(voteTo3, voteTo1, voteTo2));
     }
 
     @Test
@@ -81,7 +81,7 @@ class RestaurantVoteControllerTest extends AbstractControllerTest {
                 .param("startDate", "2024-01-29").param("endDate", "2024-01-30"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(VOTE_TO5, VOTE_TO4));
+                .andExpect(VOTE_TO_MATCHER.contentJson(voteTo5, voteTo4));
     }
 
     @Test
@@ -120,7 +120,7 @@ class RestaurantVoteControllerTest extends AbstractControllerTest {
                 .param("endDate", "2024-01-30"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(VOTE_TO5, VOTE_TO4));
+                .andExpect(VOTE_TO_MATCHER.contentJson(voteTo5, voteTo4));
     }
 
     @Test

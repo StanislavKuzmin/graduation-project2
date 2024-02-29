@@ -1,5 +1,6 @@
 package ru.javaops.topjava2.web.menu;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,6 +26,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNotFound;
 @RestController
 @RequestMapping(value = AdminRestaurantController.REST_URL + AdminMenuController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
+@Tag(name = "Manage menu of restaurants", description = "Create, update and delete menu of restaurants")
 public class AdminMenuController {
 
     public static final String REST_URL = "/{restaurantId}/menu";

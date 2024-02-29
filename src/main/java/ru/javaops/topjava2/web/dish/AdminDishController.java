@@ -1,5 +1,6 @@
 package ru.javaops.topjava2.web.dish;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.*;
 @RestController
 @RequestMapping(value = AdminDishController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
+@Tag(name = "Manage dishes of restaurants", description = "Create, update and delete dishes of restaurants")
 public class AdminDishController {
 
     public static final String REST_URL = AdminRestaurantController.REST_URL + DishController.REST_URL;

@@ -1,5 +1,6 @@
 package ru.javaops.topjava2.to;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
@@ -20,6 +21,7 @@ public class DishTo extends NamedTo {
     @Range(min = 10, max = 5000)
     Integer calories;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     Integer restaurantId;
 
     public DishTo(Integer id, String name, Integer price, Integer calories, Integer restaurantId) {

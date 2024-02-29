@@ -1,5 +1,6 @@
 package ru.javaops.topjava2.web.restaurant;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,6 +21,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNotFoundWi
 @RequestMapping(value = RestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @CacheConfig(cacheNames = {"restaurant"})
+@Tag(name = "Info about restaurants", description = "Read information about restaurants in application")
 public class RestaurantController {
 
     public static final String REST_URL = "/api/restaurants";
