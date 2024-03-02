@@ -26,8 +26,8 @@ import java.util.Optional;
 @Slf4j
 @AllArgsConstructor
 public class SecurityConfig {
-    public static final PasswordEncoder PASSWORD_ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
+    public static final PasswordEncoder PASSWORD_ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
     private final UserRepository userRepository;
     private final RestAuthenticationEntryPoint authenticationEntryPoint;
 
@@ -56,6 +56,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
+                .requestMatchers(HttpMethod.GET, "/api/restaurants/votes/today").permitAll()
                 .requestMatchers("/api/admin/**").hasRole(Role.ADMIN.name())
                 .requestMatchers(HttpMethod.POST, "/api/profile").anonymous()
                 .requestMatchers("/api/**").hasAnyRole(Role.ADMIN.name(), Role.USER.name())

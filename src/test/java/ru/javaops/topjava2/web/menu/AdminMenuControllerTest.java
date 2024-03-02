@@ -50,6 +50,15 @@ class AdminMenuControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
+    void addToTodayMenuDuplicate() throws Exception {
+        perform(MockMvcRequestBuilders.post(REST_URL_SLASH + "add")
+                .param("dishesIndex[]", dish1.getId().toString()))
+                .andDo(print())
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
     void addToTodayMenuNotFound() throws Exception {
         perform(MockMvcRequestBuilders.post(REST_URL_SLASH + "add")
                 .param("dishesIndex[]", String.valueOf(NOT_FOUND)))

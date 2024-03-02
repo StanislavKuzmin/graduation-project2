@@ -1,3 +1,5 @@
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/80cf264b745b46499e52da74f4fce294)](https://app.codacy.com/gh/StanislavKuzmin/graduation-project2/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+
 Voting restaurant application (without frontend) 
 ===============================
 

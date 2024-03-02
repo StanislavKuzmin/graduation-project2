@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import ru.javaops.topjava2.error.DataConflictException;
 import ru.javaops.topjava2.error.NotFoundException;
 import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.model.Menu;
@@ -47,11 +48,16 @@ public class AdminMenuController {
         List<Menu> todayMenu = new ArrayList<>();
         for (Integer id : dishesId) {
             Dish dish = checkNotFound(dishRepository.get(id, restaurantId), "id=" + id + " or doesn't belong to entity with id=" + restaurantId);
-            Menu menu = new Menu(dish, LocalDate.now(clock));
+            MenuId menuId = new MenuId(id, LocalDate.now(clock));
+            if (menuRepository.existsByMenuId(menuId)) {continue;}
+            Menu menu = new Menu(menuId, dish);
             todayMenu.add(menu);
         }
+        if (todayMenu.isEmpty()) {
+            throw new DataConflictException("Dishes with id=" + Arrays.toString(dishesId.toArray()) + " has already in today menu");
+        }
         log.info("Add dish with indexes={} in today menu for the restaurant with id={}",
-                Arrays.toString(dishesId.toArray()), restaurantId);
+                Arrays.toString(todayMenu.stream().map(m -> m.getDish().id()).toArray()), restaurantId);
         return menuRepository.saveAll(todayMenu);
     }
 
@@ -71,19 +77,8 @@ public class AdminMenuController {
     public List<Menu> addMenuFromDate(@PathVariable int restaurantId, @RequestParam LocalDate date) {
         List<MenuTo> menuTos = menuRepository.getRestaurantMenuHistory(date, restaurantId);
         if (!menuTos.isEmpty()) {
-            List<Menu> todayMenu = createTodayMenu(restaurantId, menuTos);
-            log.info("Add menu from date={} to today menu for the restaurant with id={}", date, restaurantId);
-            return menuRepository.saveAll(todayMenu);
+            return addDishesToTodayMenu(restaurantId, menuTos.stream().map(m -> m.dishTo().getId().toString()).toList());
         }
         throw new NotFoundException("There is no menu to copy for the selected date " + date + "for the restaurant with id=" + restaurantId);
-    }
-
-    private List<Menu> createTodayMenu(int restaurantId, List<MenuTo> menuTos) {
-        return menuTos.stream()
-                .map(m -> {
-                    Dish dish = new Dish(m.dishTo().id(), m.dishTo().getName(), m.dishTo().getPrice(), m.dishTo().getCalories());
-                    dish.setRestaurantId(restaurantId);
-                    return new Menu(dish, LocalDate.now());
-                }).toList();
     }
 }

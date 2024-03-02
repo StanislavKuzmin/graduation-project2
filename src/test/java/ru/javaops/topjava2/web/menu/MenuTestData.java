@@ -26,7 +26,7 @@ public class MenuTestData {
     public static final MenuTo menuTo2 = new MenuTo(LocalDate.now(), dish6);
     public static final MenuTo menuTo3 = new MenuTo(LocalDate.of(2024, 1, 30), dish5);
     public static final MenuTo menuTo4 = new MenuTo(LocalDate.of(2024, 1, 30), dish6);
-    public static final String[] indexes = new String[] {dish2.getId().toString(), dish3.getId().toString()};
+    public static final String[] indexes = new String[] {dish1.getId().toString(), dish2.getId().toString(), dish3.getId().toString()};
 
 
 }

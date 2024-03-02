@@ -24,6 +24,10 @@ public class DishTestData {
         return new Dish(null, "beer", 450780, 500);
     }
 
+    public static Dish getNewNotValid() {
+        return new Dish(null, "beer", Integer.MAX_VALUE, 5500);
+    }
+
     public static Dish getUpdated() {
         return new Dish(DISH1_ID, "roast", 350000, 400);
     }

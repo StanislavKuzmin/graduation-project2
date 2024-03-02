@@ -66,7 +66,6 @@ class RestaurantVoteControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
     void getAllVoteToday() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "today"))
                 .andExpect(status().isOk())

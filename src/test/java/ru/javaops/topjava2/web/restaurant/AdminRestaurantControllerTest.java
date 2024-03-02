@@ -75,9 +75,32 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
+    void createWithLocationNotValid() throws Exception {
+        Restaurant newRestaurant = getNew();
+        newRestaurant.setAddress("aa");
+        perform(MockMvcRequestBuilders.post(AdminRestaurantController.REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(writeValue(newRestaurant)))
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
     void updateInvalid() throws Exception {
         Restaurant invalid = new Restaurant(restaurant1);
         invalid.setName("");
+        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + RESTAURANT1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(writeValue(invalid)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void updateHtmlUnsafe() throws Exception {
+        Restaurant invalid = new Restaurant(restaurant1);
+        invalid.setName("<script>alert(123)</script>");
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + RESTAURANT1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(invalid)))

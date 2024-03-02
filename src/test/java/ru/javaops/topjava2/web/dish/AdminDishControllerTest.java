@@ -76,9 +76,32 @@ class AdminDishControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
+    void createWithLocationNotValid() throws Exception {
+        Dish newDish = getNewNotValid();
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(writeValue(newDish)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
     void updateInvalid() throws Exception {
         Dish invalid = new Dish(dish1);
         invalid.setName("");
+        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + DISH1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(writeValue(invalid)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void updateHtmlUnsafe() throws Exception {
+        Dish invalid = new Dish(dish1);
+        invalid.setName("<script>alert(123)</script>");
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + DISH1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(invalid)))
