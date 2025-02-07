@@ -2,6 +2,7 @@ package com.github.kuzmin.web.restaurant;
 
 import com.github.kuzmin.model.Restaurant;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -22,14 +23,11 @@ import static com.github.kuzmin.util.validation.ValidationUtil.checkNotFoundWith
 @Slf4j
 @CacheConfig(cacheNames = {"restaurant"})
 @Tag(name = "Info about restaurants", description = "Read information about restaurants in application")
+@RequiredArgsConstructor
 public class RestaurantController {
 
     public static final String REST_URL = "/api/restaurants";
     private final RestaurantRepository restaurantRepository;
-
-    public RestaurantController(RestaurantRepository restaurantRepository) {
-        this.restaurantRepository = restaurantRepository;
-    }
 
     @GetMapping
     @Cacheable

@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import com.github.kuzmin.HasId;
 
 import java.util.List;
 
@@ -20,15 +19,15 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Restaurant extends NamedEntity implements HasId {
+public class Restaurant extends NamedEntity {
 
     @NotBlank
-    @Size(min = 10, max = 200)
+    @Size(max = 200)
     @Column(name = "address", nullable = false)
     @NoHtml
     private String address;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval=true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "restaurant_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @Hidden

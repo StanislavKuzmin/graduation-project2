@@ -1,8 +1,6 @@
 package com.github.kuzmin.repository;
 
-import com.github.kuzmin.model.Menu;
-import com.github.kuzmin.model.MenuId;
-import com.github.kuzmin.to.MenuTo;
+import com.github.kuzmin.model.MenuItem;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -14,25 +12,24 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Transactional(readOnly = true)
-public interface MenuRepository extends JpaRepository<Menu, MenuId> {
+public interface MenuRepository extends JpaRepository<MenuItem, Integer> {
 
     @Transactional
     @Modifying
-    @Query("DELETE FROM Menu m WHERE m.id=:id")
-    int delete(@Param("id") MenuId id);
+    @Query("DELETE FROM MenuItem m WHERE m.id=:id")
+    int delete(@Param("id") Integer id);
 
-    @EntityGraph(attributePaths = {"dish"}, type = EntityGraph.EntityGraphType.LOAD)
-    @Query("SELECT new com.github.kuzmin.to.MenuTo(m.id.date, m.dish)" +
-            " FROM Menu m WHERE m.dish.restaurantId =:restaurantId AND m.id.date =:date" +
+    @Query("SELECT m FROM MenuItem m WHERE m.dish.restaurantId =:restaurantId AND m.date =:date" +
             " ORDER BY m.dish.price DESC")
-    List<MenuTo> getRestaurantMenuHistory(@Param("date") LocalDate date, @Param("restaurantId") int restaurantId);
+    List<MenuItem> getRestaurantMenuHistory(@Param("date") LocalDate date, @Param("restaurantId") int restaurantId);
 
-    @EntityGraph(attributePaths = {"dish"}, type = EntityGraph.EntityGraphType.LOAD)
-    @Query("SELECT new com.github.kuzmin.to.MenuTo(m.id.date, m.dish)" +
-            " FROM Menu m WHERE m.dish.restaurantId =:restaurantId AND m.id.date =current_date" +
+    @Query("SELECT m FROM MenuItem m WHERE m.dish.restaurantId =:restaurantId AND m.date =current_date" +
             " ORDER BY m.dish.price DESC")
-    List<MenuTo> getRestaurantMenuToday(@Param("restaurantId") int restaurantId);
+    List<MenuItem> getRestaurantMenuToday(@Param("restaurantId") int restaurantId);
 
-    @Query("SELECT COUNT(m.id) = 1 FROM Menu m WHERE m.id=:id")
-    boolean existsByMenuId(@Param("id") MenuId id);
+    @Query("SELECT m FROM MenuItem m WHERE m.date =current_date")
+    List<MenuItem> getAllRestaurantMenuToday();
+
+    @Query("SELECT COUNT(m.id) = 1 FROM MenuItem m WHERE m.id=:id")
+    boolean existsByMenuId(@Param("id") Integer id);
 }

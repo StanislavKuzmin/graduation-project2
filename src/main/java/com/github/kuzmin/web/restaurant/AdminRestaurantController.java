@@ -4,6 +4,7 @@ import com.github.kuzmin.model.Restaurant;
 import com.github.kuzmin.util.validation.ValidationUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -22,15 +23,11 @@ import java.net.URI;
 @Slf4j
 @CacheConfig(cacheNames = "restaurant")
 @Tag(name = "Manage restaurant system", description = "Create, update and delete restaurants in application")
+@RequiredArgsConstructor
 public class AdminRestaurantController {
     public static final String REST_URL = "/api/admin/restaurants";
     private final RestaurantRepository restaurantRepository;
     private final UniqueNameAddressValidator validator;
-
-    public AdminRestaurantController(RestaurantRepository restaurantRepository, UniqueNameAddressValidator validator) {
-        this.restaurantRepository = restaurantRepository;
-        this.validator = validator;
-    }
 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {

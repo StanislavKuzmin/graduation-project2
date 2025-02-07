@@ -17,34 +17,28 @@ import com.github.kuzmin.HasId;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Dish extends NamedEntity implements HasId {
+public class Dish extends NamedEntity {
 
     @Column(name = "price", nullable = false)
     @NotNull
-    @Range(min = 10000, max = 50000000)
+    @Range(min = 10000)
     private Integer price;
-
-    @Column(name = "calories", nullable = false)
-    @NotNull
-    @Range(min = 10, max = 5000)
-    private Integer calories;
 
     @Column(name = "restaurant_id")
     @Hidden
     private Integer restaurantId;
 
-    public Dish(Integer id, String name, Integer price, Integer calories) {
+    public Dish(Integer id, String name, Integer price) {
         super(id, name);
         this.price = price;
-        this.calories = calories;
     }
 
     public Dish(Dish d) {
-        this(d.id(), d.name, d.price, d.calories);
+        this(d.id(), d.name, d.price);
     }
 
     @Override
     public String toString() {
-        return "Dish:" + id + '[' + name + ']' + '[' + price + ']' + '[' + calories + ']';
+        return "Dish:" + id + '[' + name + ']' + '[' + price + ']';
     }
 }

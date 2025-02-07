@@ -1,6 +1,7 @@
 package com.github.kuzmin.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,39 +17,23 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-public class Vote {
-
-    @EmbeddedId
-    private VoteId id;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @MapsId("userId")
-    @OnDelete(action = OnDeleteAction.CASCADE)
+public class Vote extends BaseEntity {
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "restaurant_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Restaurant restaurant;
 
-    public Vote(Integer userId, LocalDate voteDate) {
-        this.id = new VoteId(userId, voteDate);
-    }
+    @Column(name = "vote_date")
+    @NotNull
+    private LocalDate voteDate;
 
-    public Vote(VoteId voteId) {
-        this.id = voteId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Vote that = (Vote) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public Vote(Integer id, User user, Restaurant restaurant, LocalDate voteDate) {
+        this.id = id;
+        this.user = user;
+        this.restaurant = restaurant;
+        this.voteDate = voteDate;
     }
 }

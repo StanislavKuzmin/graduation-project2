@@ -2,7 +2,6 @@ package com.github.kuzmin.repository;
 
 import com.github.kuzmin.error.NotFoundException;
 import com.github.kuzmin.model.Dish;
-import com.github.kuzmin.to.DishTo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,9 +13,8 @@ import java.util.Optional;
 
 @Transactional(readOnly = true)
 public interface DishRepository extends JpaRepository<Dish, Integer> {
-    @Query("SELECT new com.github.kuzmin.to.DishTo(d.id, d.name, d.price, d.calories, d.restaurantId)" +
-            " FROM Dish d WHERE d.restaurantId =:restaurantId ORDER BY d.price ASC")
-    List<DishTo> getAll(@Param("restaurantId") int restaurantId);
+    @Query("SELECT d FROM Dish d WHERE  d.restaurantId =:restaurantId ORDER BY d.price ASC")
+    List<Dish> getAllByRestaurant(@Param("restaurantId") int restaurantId);
 
     default Dish get(int id, int restaurantId) {
         return findById(id)

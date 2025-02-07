@@ -1,7 +1,7 @@
 package com.github.kuzmin.web.menu;
 
+import com.github.kuzmin.model.MenuItem;
 import com.github.kuzmin.to.MenuTo;
-import com.github.kuzmin.model.Menu;
 import com.github.kuzmin.web.MatcherFactory;
 
 import java.time.LocalDate;
@@ -11,7 +11,7 @@ import static com.github.kuzmin.web.dish.DishTestData.*;
 
 public class MenuTestData {
 
-    public static final MatcherFactory.Matcher<Menu> MENU_MATCHER = MatcherFactory.usingAssertions(Menu.class,
+    public static final MatcherFactory.Matcher<MenuItem> MENU_MATCHER = MatcherFactory.usingAssertions(MenuItem.class,
             (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("dish.restaurantId").isEqualTo(e),
             (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("dish.restaurantId").isEqualTo(e));
 
@@ -19,9 +19,9 @@ public class MenuTestData {
             (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("dishTo.restaurantId").isEqualTo(e),
             (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("dishTo.restaurantId").isEqualTo(e));
 
-    public static final Menu menu1 = new Menu(dish1, LocalDate.now());
-    public static final Menu menu2 = new Menu(dish2, LocalDate.now());
-    public static final Menu menu3 = new Menu(dish3, LocalDate.now());
+    public static final MenuItem MENU_ITEM_1 = new MenuItem(dish1, LocalDate.now());
+    public static final MenuItem MENU_ITEM_2 = new MenuItem(dish2, LocalDate.now());
+    public static final MenuItem MENU_ITEM_3 = new MenuItem(dish3, LocalDate.now());
     public static final MenuTo menuTo1 = new MenuTo(LocalDate.now(), dish4);
     public static final MenuTo menuTo2 = new MenuTo(LocalDate.now(), dish6);
     public static final MenuTo menuTo3 = new MenuTo(LocalDate.of(2024, 1, 30), dish5);

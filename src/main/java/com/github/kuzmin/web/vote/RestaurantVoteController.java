@@ -6,6 +6,7 @@ import com.github.kuzmin.model.Vote;
 import com.github.kuzmin.util.VoteUtil;
 import com.github.kuzmin.util.validation.ValidationUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -34,6 +35,7 @@ import static com.github.kuzmin.util.validation.ValidationUtil.checkNotFoundWith
 @RequestMapping(value = RestaurantController.REST_URL + RestaurantVoteController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @Tag(name = "Voting restaurant system", description = "Vote for the restaurant and get info about results of election today or in the past")
+@RequiredArgsConstructor
 public class RestaurantVoteController {
 
     public static final String REST_URL = "/votes";
@@ -43,18 +45,6 @@ public class RestaurantVoteController {
     private final UserRepository userRepository;
     private final CacheManager cacheManager;
     private final Clock clock;
-
-    public RestaurantVoteController(RestaurantRepository restaurantRepository,
-                                    VoteRepository voteRepository,
-                                    UserRepository userRepository,
-                                    CacheManager cacheManager,
-                                    Clock clock) {
-        this.restaurantRepository = restaurantRepository;
-        this.voteRepository = voteRepository;
-        this.userRepository = userRepository;
-        this.cacheManager = cacheManager;
-        this.clock = clock;
-    }
 
     @GetMapping("/today")
     public List<VoteTo> getAllVoteToday() {

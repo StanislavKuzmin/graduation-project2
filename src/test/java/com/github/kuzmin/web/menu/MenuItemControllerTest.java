@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static com.github.kuzmin.web.menu.MenuTestData.*;
 import static com.github.kuzmin.web.restaurant.RestaurantTestData.RESTAURANT2_ID;
 
-class MenuControllerTest extends AbstractControllerTest {
+class MenuItemControllerTest extends AbstractControllerTest {
 
     private static final String REST_URL_SLASH = RestaurantController.REST_URL + '/' + RESTAURANT2_ID + "/menu" + '/';
 

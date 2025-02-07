@@ -1,6 +1,7 @@
 package com.github.kuzmin.web.menu;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -15,13 +16,10 @@ import java.util.List;
 @RequestMapping(value = RestaurantController.REST_URL + MenuController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @Tag(name = "Info about menu of restaurants", description = "Read information about menu of restaurants today or in the past")
+@RequiredArgsConstructor
 public class MenuController {
     public static final String REST_URL = "/{restaurantId}/menu";
     private final MenuRepository menuRepository;
-
-    public MenuController(MenuRepository menuRepository) {
-        this.menuRepository = menuRepository;
-    }
 
     @GetMapping("/today")
     public List<MenuTo> getTodayMenu(@PathVariable int restaurantId) {

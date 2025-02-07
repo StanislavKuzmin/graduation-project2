@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static com.github.kuzmin.web.dish.DishTestData.*;
 import static com.github.kuzmin.web.restaurant.RestaurantTestData.RESTAURANT1_ID;
 
-class AdminMenuControllerTest extends AbstractControllerTest {
+class AdminMenuControllerTestItem extends AbstractControllerTest {
 
     @Autowired
     MenuRepository repository;
@@ -32,7 +32,7 @@ class AdminMenuControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MenuTestData.MENU_MATCHER.contentJson(MenuTestData.menu2, MenuTestData.menu3));
+                .andExpect(MenuTestData.MENU_MATCHER.contentJson(MenuTestData.MENU_ITEM_2, MenuTestData.MENU_ITEM_3));
     }
 
     @Test
@@ -43,7 +43,7 @@ class AdminMenuControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        assertFalse(repository.existsByMenuId(MenuTestData.menu1.getId()));
+        assertFalse(repository.existsByMenuId(MenuTestData.MENU_ITEM_1.getId()));
     }
 
     @Test
@@ -81,7 +81,7 @@ class AdminMenuControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MenuTestData.MENU_MATCHER.contentJson(MenuTestData.menu3, MenuTestData.menu2));
+                .andExpect(MenuTestData.MENU_MATCHER.contentJson(MenuTestData.MENU_ITEM_3, MenuTestData.MENU_ITEM_2));
     }
 
     @Test

@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS user_role;
-DROP TABLE IF EXISTS menu;
+DROP TABLE IF EXISTS menuItem;
 DROP TABLE IF EXISTS vote;
 DROP TABLE IF EXISTS dish;
 DROP TABLE IF EXISTS restaurant;
@@ -35,8 +35,6 @@ CREATE TABLE restaurant
     CONSTRAINT restaurant_unique_name_address_idx UNIQUE (name, address)
 );
 
-CREATE INDEX restaurant_name_idx ON restaurant (name);
-
 CREATE TABLE vote
 (
     user_id       INTEGER            NOT NULL,
@@ -46,9 +44,7 @@ CREATE TABLE vote
     FOREIGN KEY (restaurant_id) REFERENCES restaurant (id) ON DELETE CASCADE,
     CONSTRAINT user_date PRIMARY KEY (user_id, vote_date)
 );
-
 CREATE INDEX vote_restaurant_idx ON vote (restaurant_id);
-
 
 CREATE TABLE dish
 (
@@ -57,13 +53,11 @@ CREATE TABLE dish
     price         INTEGER        NOT NULL,
     calories      INTEGER        NOT NULL,
     restaurant_id INTEGER        NOT NULL,
-    CONSTRAINT dish_restaurant_unique_name_idx UNIQUE (name, restaurant_id),
+    CONSTRAINT dish_restaurant_unique_name_idx UNIQUE (restaurant_id, name),
     FOREIGN KEY (restaurant_id) REFERENCES restaurant (id) ON DELETE CASCADE
 );
 
-CREATE INDEX dish_restaurant_idx ON dish (restaurant_id);
-
-CREATE TABLE menu
+CREATE TABLE menuItem
 (
     dish_id INTEGER            NOT NULL,
     date    DATE DEFAULT CURRENT_DATE NOT NULL,
@@ -73,7 +67,7 @@ CREATE TABLE menu
 
 DELETE FROM user_role;
 DELETE FROM vote;
-DELETE FROM menu;
+DELETE FROM menuItem;
 DELETE FROM users;
 DELETE FROM dish;
 DELETE FROM restaurant;
@@ -119,7 +113,7 @@ VALUES (1, 5, '2024-01-29'),
        (4, 7, CURRENT_DATE);
 
 
-INSERT INTO menu (dish_id, date)
+INSERT INTO menuItem (dish_id, date)
 VALUES (8, '2024-01-29'),
        (9, '2024-01-29'),
        (10, '2024-01-29'),

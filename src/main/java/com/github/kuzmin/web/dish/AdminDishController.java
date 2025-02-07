@@ -5,6 +5,7 @@ import com.github.kuzmin.util.validation.ValidationUtil;
 import com.github.kuzmin.web.restaurant.AdminRestaurantController;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,16 +23,12 @@ import static com.github.kuzmin.util.validation.ValidationUtil.*;
 @RequestMapping(value = AdminDishController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @Tag(name = "Manage dishes of restaurants", description = "Create, update and delete dishes of restaurants")
+@RequiredArgsConstructor
 public class AdminDishController {
 
     public static final String REST_URL = AdminRestaurantController.REST_URL + DishController.REST_URL;
     private final DishRepository dishRepository;
     private final UniqueNameValidator validator;
-
-    public AdminDishController(DishRepository dishRepository, UniqueNameValidator validator) {
-        this.dishRepository = dishRepository;
-        this.validator = validator;
-    }
 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
