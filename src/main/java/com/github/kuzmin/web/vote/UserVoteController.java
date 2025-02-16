@@ -1,25 +1,19 @@
 package com.github.kuzmin.web.vote;
 
+import com.github.kuzmin.config.TimeProvider;
+import com.github.kuzmin.service.VoteService;
+import com.github.kuzmin.to.UserVoteTo;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.github.kuzmin.model.VoteId;
-import com.github.kuzmin.repository.VoteRepository;
-import com.github.kuzmin.to.VoteTo;
 import com.github.kuzmin.web.AuthUser;
 import com.github.kuzmin.web.user.ProfileController;
 
-import java.time.Clock;
 import java.time.LocalDate;
-import java.util.List;
-
-import static com.github.kuzmin.util.DateUtil.atThisDayOrMax;
-import static com.github.kuzmin.util.DateUtil.atThisDayOrMin;
 
 @RestController
 @RequestMapping(value = ProfileController.REST_URL + UserVoteController.REST_URL)
@@ -29,21 +23,20 @@ import static com.github.kuzmin.util.DateUtil.atThisDayOrMin;
 public class UserVoteController {
 
     public static final String REST_URL = "/votes";
-    private final VoteRepository voteRepository;
-    private final Clock clock;
+    private final VoteService voteService;
+    private final TimeProvider timeProvider;
 
     @GetMapping("/today")
-    public VoteTo getVoteToday() {
+    public UserVoteTo getVoteToday() {
         int userId = AuthUser.authId();
         log.info("get vote today for user with id={}", userId);
-        return voteRepository.getUserVoteToday(new VoteId(userId, LocalDate.now(clock)));
+        return voteService.getUserVoteByDate(timeProvider.getCurrentDate(), userId);
     }
 
     @GetMapping("/history")
-    public List<VoteTo> getVoteHistory(@RequestParam @Nullable LocalDate startDate,
-                                       @RequestParam @Nullable LocalDate endDate) {
+    public UserVoteTo getVoteByDate(@RequestParam LocalDate date) {
         int userId = AuthUser.authId();
         log.info("get vote history for user with id={}", userId);
-        return voteRepository.getUserVoteHistoryBetweenOpen(atThisDayOrMin(startDate), atThisDayOrMax(endDate), userId);
+        return voteService.getUserVoteByDate(date, userId);
     }
 }

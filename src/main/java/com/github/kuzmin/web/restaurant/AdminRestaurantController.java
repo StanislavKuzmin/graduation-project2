@@ -1,6 +1,7 @@
 package com.github.kuzmin.web.restaurant;
 
 import com.github.kuzmin.model.Restaurant;
+import com.github.kuzmin.to.RestaurantTo;
 import com.github.kuzmin.util.validation.ValidationUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -17,6 +18,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.github.kuzmin.repository.RestaurantRepository;
 
 import java.net.URI;
+
+import static com.github.kuzmin.to.RestaurantTo.fromTo;
+import static com.github.kuzmin.to.RestaurantTo.newFromTo;
 
 @RestController
 @RequestMapping(value = AdminRestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -38,25 +42,25 @@ public class AdminRestaurantController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
-        log.info("delete {}", id);
+        log.info("delete restaurant {}", id);
         restaurantRepository.deleteExisted(id);
     }
 
     @CacheEvict(allEntries = true)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@RequestBody @Valid Restaurant restaurant, @PathVariable int id) {
-        log.info("update {} with id={}", restaurant, id);
-        ValidationUtil.assureIdConsistent(restaurant, id);
-        restaurantRepository.prepareAndSave(restaurant);
+    public void update(@RequestBody @Valid RestaurantTo restaurantTo, @PathVariable int id) {
+        log.info("update restaurant {} with id={}", restaurantTo, id);
+        ValidationUtil.assureIdConsistent(restaurantTo, id);
+        restaurantRepository.save(fromTo(restaurantTo));
     }
 
     @CacheEvict(allEntries = true)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Restaurant> createWithLocation(@RequestBody @Valid Restaurant restaurant) {
-        log.info("create {}", restaurant);
-        ValidationUtil.checkNew(restaurant);
-        Restaurant created = restaurantRepository.prepareAndSave(restaurant);
+    public ResponseEntity<Restaurant> createWithLocation(@RequestBody @Valid RestaurantTo restaurantTo) {
+        log.info("create restaurant {}", restaurantTo);
+        ValidationUtil.checkNew(restaurantTo);
+        Restaurant created = restaurantRepository.save(newFromTo(restaurantTo));
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(RestaurantController.REST_URL + "/{id}")
                 .buildAndExpand(created.getId()).toUri();

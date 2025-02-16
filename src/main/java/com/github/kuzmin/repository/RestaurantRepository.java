@@ -27,15 +27,4 @@ public interface RestaurantRepository extends BaseRepository<Restaurant> {
     default Restaurant getExistedByName(String name) {
         return findByName(name).orElseThrow(() -> new NotFoundException("Restaurant with name=" + name + " not found"));
     }
-
-    default Restaurant prepareAndSave(Restaurant restaurant) {
-        restaurant.setName(restaurant.getName().toLowerCase());
-        restaurant.setAddress(restaurant.getAddress().toLowerCase());
-        return save(restaurant);
-    }
-
-    default List<RestaurantTo> getAll() {
-        return findAll(Sort.by(Sort.Direction.ASC, "name")).stream().
-                map(r -> new RestaurantTo(r.getId(), r.getName(), r.getAddress())).collect(Collectors.toList());
-    }
 }

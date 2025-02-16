@@ -1,5 +1,6 @@
 package com.github.kuzmin.to;
 
+import com.github.kuzmin.model.Dish;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
@@ -16,23 +17,26 @@ public class DishTo extends NamedTo {
     @Range(max = 5000)
     Integer price;
 
-    @Column(name = "calories", nullable = false)
-    @NotNull
-    @Range(min = 10, max = 5000)
-    Integer calories;
-
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @NotNull
     Integer restaurantId;
 
-    public DishTo(Integer id, String name, Integer price, Integer calories, Integer restaurantId) {
+    @NotNull
+    Boolean isExcludedFromMenu;
+
+    public DishTo(Integer id, String name, Integer price, Integer restaurantId, Boolean isExcludedFromMenu) {
         super(id, name);
         this.price = price;
-        this.calories = calories;
         this.restaurantId = restaurantId;
+        this.isExcludedFromMenu = isExcludedFromMenu;
+    }
+
+    public static DishTo fromDish(Dish dish) {
+        return new DishTo(dish.getId(), dish.getName(), dish.getPrice(), dish.getRestaurant().getId(), dish.getIsExcludedFromMenu());
     }
 
     @Override
     public String toString() {
-        return "DishTo:" + id + '[' + name + ']' + '[' + price + ']' + '[' + calories + ']';
+        return "DishTo:" + id + '[' + name + ']' + '[' + price + ']';
     }
 }

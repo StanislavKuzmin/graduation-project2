@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static com.github.kuzmin.web.dish.DishTestData.*;
 import static com.github.kuzmin.web.restaurant.RestaurantTestData.RESTAURANT1_ID;
 
-class AdminMenuControllerTestItem extends AbstractControllerTest {
+class AdminMenuControllerTest extends AbstractControllerTest {
 
     @Autowired
     MenuRepository repository;
@@ -43,14 +43,14 @@ class AdminMenuControllerTestItem extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        assertFalse(repository.existsByMenuId(MenuTestData.MENU_ITEM_1.getId()));
+        assertFalse(repository.existsByMenu(MenuTestData.MENU_ITEM_1.getId()));
     }
 
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void addToTodayMenuDuplicate() throws Exception {
         perform(MockMvcRequestBuilders.post(REST_URL_SLASH + "add")
-                .param("dishesIndex[]", dish1.getId().toString()))
+                .param("dishesIndex[]", dish1_rest1.getId().toString()))
                 .andDo(print())
                 .andExpect(status().isConflict());
     }
@@ -68,7 +68,7 @@ class AdminMenuControllerTestItem extends AbstractControllerTest {
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void deleteFromTodayMenuNotFound() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL)
-                .param("id", String.valueOf(dish2.id())))
+                .param("id", String.valueOf(dish2_rest1.id())))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }

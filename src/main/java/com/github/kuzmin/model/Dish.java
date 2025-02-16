@@ -1,16 +1,10 @@
 package com.github.kuzmin.model;
 
 import io.swagger.v3.oas.annotations.Hidden;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.validator.constraints.Range;
-import com.github.kuzmin.HasId;
 
 @Entity
 @Table(name = "dish")
@@ -24,17 +18,21 @@ public class Dish extends NamedEntity {
     @Range(min = 10000)
     private Integer price;
 
-    @Column(name = "restaurant_id")
-    @Hidden
-    private Integer restaurantId;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "restaurant_id")
+    private Restaurant restaurant;
+
+    @Column(name = "is_excluded_from_menu", columnDefinition = "boolean default false")
+    private Boolean isExcludedFromMenu;
 
     public Dish(Integer id, String name, Integer price) {
         super(id, name);
         this.price = price;
+        this.isExcludedFromMenu = false;
     }
 
-    public Dish(Dish d) {
-        this(d.id(), d.name, d.price);
+    public Dish(Dish dish) {
+        this(dish.getId(), dish.getName(), dish.getPrice());
     }
 
     @Override

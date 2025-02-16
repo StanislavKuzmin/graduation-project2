@@ -27,15 +27,10 @@ public class VoteTestData {
     public static final VoteTo voteTo8 = new VoteTo(LocalDate.of(2024, 1, 30), UserTestData.another_user, RestaurantTestData.restaurant3);
 
     public static Vote getNew() {
-        Vote vote = new Vote(UserTestData.USER_ID, LocalDate.of(2024, 1, 31));
-        vote.setRestaurant(RestaurantTestData.restaurant1);
-        return vote;
+        return new Vote(null, UserTestData.user, RestaurantTestData.restaurant1, LocalDate.of(2024, 1, 31));
     }
 
     public static Vote getEarlyVote() {
-        Vote vote = new Vote(UserTestData.USER_ID, LocalDate.of(2024, 1, 30));
-        vote.setRestaurant(RestaurantTestData.restaurant2);
-        vote.setUser(UserTestData.user);
-        return vote;
+        return new Vote(30, UserTestData.user, RestaurantTestData.restaurant2, LocalDate.of(2024, 1, 30));
     }
 }

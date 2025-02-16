@@ -31,11 +31,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static com.github.kuzmin.web.vote.VoteTestData.*;
 
-@ContextConfiguration(classes = RestaurantVoteControllerTest.CustomClockConfiguration.class)
-class RestaurantVoteControllerTest extends AbstractControllerTest {
+@ContextConfiguration(classes = VoteControllerTest.CustomClockConfiguration.class)
+class VoteControllerTest extends AbstractControllerTest {
     private static final LocalDateTime TEST_DATE_TIME = LocalDateTime.of(2024, 1, 30, 10, 0);
-    private static final String REST_URL_SLASH = RestaurantController.REST_URL + RestaurantVoteController.REST_URL + '/';
-    private static final String REST_URL = RestaurantController.REST_URL + RestaurantVoteController.REST_URL;
+    private static final String REST_URL_SLASH = RestaurantController.REST_URL + VoteController.REST_URL + '/';
+    private static final String REST_URL = RestaurantController.REST_URL + VoteController.REST_URL;
     @Autowired
     private VoteRepository repository;
 

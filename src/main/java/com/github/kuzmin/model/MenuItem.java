@@ -10,11 +10,12 @@ import lombok.Setter;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "menu")
+@Table(name = "menu_item")
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class MenuItem extends BaseEntity {
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "dish_id")
     private Dish dish;

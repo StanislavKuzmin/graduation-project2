@@ -87,7 +87,7 @@ class AdminDishControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void updateInvalid() throws Exception {
-        Dish invalid = new Dish(DishTestData.dish1);
+        Dish invalid = new Dish(DishTestData.dish1_rest1);
         invalid.setName("");
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + DishTestData.DISH1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -99,7 +99,7 @@ class AdminDishControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void updateHtmlUnsafe() throws Exception {
-        Dish invalid = new Dish(DishTestData.dish1);
+        Dish invalid = new Dish(DishTestData.dish1_rest1);
         invalid.setName("<script>alert(123)</script>");
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + DishTestData.DISH1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -111,7 +111,7 @@ class AdminDishControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void createInvalid() throws Exception {
-        Dish newDish = new Dish(null, "hamburger", 0, 400);
+        Dish newDish = new Dish(null, "hamburger", 0);
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newDish)))
@@ -122,7 +122,7 @@ class AdminDishControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void updateDuplicate() throws Exception {
-        Dish updated = new Dish(DishTestData.dish1);
+        Dish updated = new Dish(DishTestData.dish1_rest1);
         updated.setName("Solyanka");
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + DishTestData.DISH1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -135,7 +135,7 @@ class AdminDishControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void createDuplicate() throws Exception {
-        Dish newDish = new Dish(null, "Solyanka", 400000, 400);
+        Dish newDish = new Dish(null, "Solyanka", 400000);
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newDish)))

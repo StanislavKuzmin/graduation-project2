@@ -1,11 +1,12 @@
 package com.github.kuzmin.web.menu;
 
+import com.github.kuzmin.config.TimeProvider;
+import com.github.kuzmin.service.MenuService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import com.github.kuzmin.repository.MenuRepository;
 import com.github.kuzmin.to.MenuTo;
 import com.github.kuzmin.web.restaurant.RestaurantController;
 
@@ -13,24 +14,35 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = RestaurantController.REST_URL + MenuController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = RestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
-@Tag(name = "Info about menu of restaurants", description = "Read information about menu of restaurants today or in the past")
+@Tag(name = "Info about menu of restaurants", description = "Read information about menu of restaurants")
 @RequiredArgsConstructor
 public class MenuController {
-    public static final String REST_URL = "/{restaurantId}/menu";
-    private final MenuRepository menuRepository;
+    private final MenuService menuService;
+    private final TimeProvider timeProvider;
 
-    @GetMapping("/today")
-    public List<MenuTo> getTodayMenu(@PathVariable int restaurantId) {
-        log.info("today menu for the restaurant with id= {}", restaurantId);
-        return menuRepository.getRestaurantMenuToday(restaurantId);
+    @GetMapping("/menu/today")
+    public List<MenuTo> getTodayMenuAllRestaurant() {
+        log.info("today menu for all restaurants");
+        return menuService.getAllByDate(timeProvider.getCurrentDate());
     }
 
-    @GetMapping("/history")
-    public List<MenuTo> getHistoryMenu(@PathVariable int restaurantId,
-                                       @RequestParam LocalDate date) {
-        log.info("menu for the restaurant with id= {} at the date={}", restaurantId, date);
-        return menuRepository.getRestaurantMenuHistory(date, restaurantId);
+    @GetMapping("/menu/by-date")
+    public List<MenuTo> getByDateMenuAllRestaurant(@RequestParam LocalDate date) {
+        log.info("Menu for all restaurants by date {}", date);
+        return menuService.getAllByDate(date);
+    }
+
+    @GetMapping("/{restaurantId}/menu/today")
+    public MenuTo getTodayMenuRestaurant(@PathVariable int restaurantId) {
+        log.info("today menu for the restaurant with id {}", restaurantId);
+        return menuService.getByDate(timeProvider.getCurrentDate(), restaurantId);
+    }
+
+    @GetMapping("/{restaurantId}/menu/by-date")
+    public MenuTo getMenuRestaurantByDate(@PathVariable int restaurantId, @RequestParam LocalDate date) {
+        log.info("Menu for the restaurant with id {} by date={}", restaurantId, date);
+        return menuService.getByDate(date, restaurantId);
     }
 }

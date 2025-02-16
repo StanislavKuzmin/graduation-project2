@@ -1,9 +1,10 @@
 package com.github.kuzmin.web.menu;
 
+import com.github.kuzmin.config.TimeProvider;
 import com.github.kuzmin.error.DataConflictException;
 import com.github.kuzmin.error.NotFoundException;
 import com.github.kuzmin.model.Dish;
-import com.github.kuzmin.model.MenuId;
+import com.github.kuzmin.service.MenuService;
 import com.github.kuzmin.to.MenuTo;
 import com.github.kuzmin.web.restaurant.AdminRestaurantController;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,48 +34,23 @@ import static com.github.kuzmin.util.validation.ValidationUtil.checkNotFound;
 public class AdminMenuController {
 
     public static final String REST_URL = "/{restaurantId}/menu";
-    private final DishRepository dishRepository;
-    private final MenuRepository menuRepository;
-    private final Clock clock;
+    private final MenuService menuService;
 
-    @Transactional
-    @PostMapping("/add")
-    public List<MenuItem> addDishesToTodayMenu(@PathVariable int restaurantId, @RequestParam("dishesIndex[]") List<String> dishesIndex) {
-        List<Integer> dishesId = dishesIndex.stream().map(Integer::parseInt).toList();
-        List<MenuItem> todayMenuItems = new ArrayList<>();
-        for (Integer id : dishesId) {
-            Dish dish = checkNotFound(dishRepository.get(id, restaurantId), "id=" + id + " or doesn't belong to entity with id=" + restaurantId);
-            MenuId menuId = new MenuId(id, LocalDate.now(clock));
-            if (menuRepository.existsByMenuId(menuId)) {continue;}
-            MenuItem menuItem = new MenuItem(menuId, dish);
-            todayMenuItems.add(menuItem);
-        }
-        if (todayMenuItems.isEmpty()) {
-            throw new DataConflictException("Dishes with id=" + Arrays.toString(dishesId.toArray()) + " has already in today menu");
-        }
-        log.info("Add dish with indexes={} in today menu for the restaurant with id={}",
-                Arrays.toString(todayMenuItems.stream().map(m -> m.getDish().id()).toArray()), restaurantId);
-        return menuRepository.saveAll(todayMenuItems);
+    @PostMapping
+    public MenuItem addDishesToMenuByDate(@PathVariable int restaurantId,
+                                          @RequestParam int dishId,
+                                          @RequestParam LocalDate date) {
+        log.info("Add dish with index={} in menu by date={} for the restaurant with id={}",
+                dishId, date, restaurantId);
+        return menuService.addToMenuByFutureDate(date, dishId, restaurantId);
     }
 
-    @Transactional
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteFromTodayMenu(@PathVariable int restaurantId, @RequestParam int id) {
-        checkNotFound(dishRepository.get(id, restaurantId), "id=" + id + " or doesn't belong to entity with id=" + restaurantId);
-        MenuId menuId = new MenuId(id, LocalDate.now(clock));
-        checkNotFound(menuRepository.existsByMenuId(menuId), "id= " + id + " is not in today menu");
-        log.info("Delete dish with id={} from today menu for the restaurant with id={}", id, restaurantId);
-        menuRepository.delete(menuId);
-    }
-
-    @Transactional
-    @PostMapping("/add-from-date")
-    public List<MenuItem> addMenuFromDate(@PathVariable int restaurantId, @RequestParam LocalDate date) {
-        List<MenuTo> menuTos = menuRepository.getRestaurantMenuHistory(date, restaurantId);
-        if (!menuTos.isEmpty()) {
-            return addDishesToTodayMenu(restaurantId, menuTos.stream().map(m -> m.dishTo().getId().toString()).toList());
-        }
-        throw new NotFoundException("There is no menu to copy for the selected date " + date + "for the restaurant with id=" + restaurantId);
+    public void deleteFromMenuByDate(@PathVariable int restaurantId,
+                                     @RequestParam int dishId,
+                                     @RequestParam LocalDate date) {
+        log.info("Delete dish with id={} from today menu for the restaurant with id={}", dishId, restaurantId);
+        menuService.deleteFromMenuByFutureDate(date, restaurantId, dishId);
     }
 }

@@ -16,6 +16,7 @@ import com.github.kuzmin.to.RestaurantTo;
 
 import java.util.List;
 
+import static com.github.kuzmin.to.RestaurantTo.fromEntity;
 import static com.github.kuzmin.util.validation.ValidationUtil.checkNotFoundWithId;
 
 @RestController
@@ -33,25 +34,25 @@ public class RestaurantController {
     @Cacheable
     public List<RestaurantTo> getAll() {
         log.info("getAll");
-        return restaurantRepository.getAll();
+        return restaurantRepository.findAll().stream().map(RestaurantTo::fromEntity).toList();
     }
 
     @GetMapping("/{id}")
     @Cacheable(key = "#id")
-    public Restaurant get(@PathVariable int id) {
-        log.info("get {}", id);
-        return restaurantRepository.getExisted(id);
+    public RestaurantTo get(@PathVariable int id) {
+        log.info("get restaurant {}", id);
+        return fromEntity(restaurantRepository.getExisted(id));
     }
 
     @GetMapping("/{id}/with-dishes")
     public Restaurant getWithDishes(@PathVariable int id) {
-        log.info("getWithDishes {}", id);
+        log.info("get with dishes restaurant {}", id);
         return checkNotFoundWithId(restaurantRepository.getWithDishes(id), id);
     }
 
     @GetMapping("/by-name")
-    public Restaurant getByName(String name) {
-        log.info("getByName {}", name);
-        return restaurantRepository.getExistedByName(name);
+    public RestaurantTo getByName(String name) {
+        log.info("getByName restaurant {}", name);
+        return fromEntity(restaurantRepository.getExistedByName(name));
     }
 }

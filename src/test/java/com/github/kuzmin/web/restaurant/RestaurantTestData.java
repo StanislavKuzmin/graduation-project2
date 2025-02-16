@@ -27,7 +27,7 @@ public class RestaurantTestData {
     public static final Restaurant restaurant3 = new Restaurant(RESTAURANT3_ID, "dzamiko", "admiralteiskaya street, 2");
 
     static {
-        restaurant1.setDishes(List.of(DishTestData.dish1, DishTestData.dish2, DishTestData.dish3));
+        restaurant1.setDishes(List.of(DishTestData.dish1_rest1, DishTestData.dish2_rest1, DishTestData.dish3_rest1));
     }
 
     public static Restaurant getNew() {

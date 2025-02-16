@@ -27,8 +27,7 @@ public class Restaurant extends NamedEntity {
     @NoHtml
     private String address;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
-    @JoinColumn(name = "restaurant_id")
+    @OneToMany(mappedBy = "restaurant", fetch = FetchType.LAZY, orphanRemoval = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @Hidden
     private List<Dish> dishes;

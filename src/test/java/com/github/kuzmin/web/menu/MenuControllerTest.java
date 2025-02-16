@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static com.github.kuzmin.web.menu.MenuTestData.*;
 import static com.github.kuzmin.web.restaurant.RestaurantTestData.RESTAURANT2_ID;
 
-class MenuItemControllerTest extends AbstractControllerTest {
+class MenuControllerTest extends AbstractControllerTest {
 
     private static final String REST_URL_SLASH = RestaurantController.REST_URL + '/' + RESTAURANT2_ID + "/menu" + '/';
 
@@ -25,7 +25,7 @@ class MenuItemControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MENU_TO_MATCHER.contentJson(menuTo1, menuTo2));
+                .andExpect(MENU_TO_MATCHER.contentJson(menuTo2));
     }
 
     @Test
@@ -36,7 +36,7 @@ class MenuItemControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MENU_TO_MATCHER.contentJson(menuTo3, menuTo4));
+                .andExpect(MENU_TO_MATCHER.contentJson(menuTo2));
     }
 
     @Test

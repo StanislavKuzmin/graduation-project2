@@ -39,7 +39,7 @@ public class UniqueNameValidator implements org.springframework.validation.Valid
                     .ifPresent(dbDish -> {
                         if (request.getMethod().equals("PUT")) {
                             int dbId = dbDish.id();
-                            if (dish.getId() != null && dbId == dish.id() && Objects.equals(dish.getRestaurantId(), dbDish.getRestaurantId()))
+                            if (dish.getId() != null && dbId == dish.id() && Objects.equals(dish.getRestaurant().getId(), dbDish.getRestaurant().getId()))
                                 return;
                             if (requestUri.endsWith("/" + dbId) && requestUri.contains("/restaurants/" + restaurantId)) return;
                         }

@@ -51,13 +51,12 @@ CREATE TABLE dish
     id            INTEGER DEFAULT nextval('global_seq') PRIMARY KEY,
     name          VARCHAR        NOT NULL,
     price         INTEGER        NOT NULL,
-    calories      INTEGER        NOT NULL,
     restaurant_id INTEGER        NOT NULL,
     CONSTRAINT dish_restaurant_unique_name_idx UNIQUE (restaurant_id, name),
     FOREIGN KEY (restaurant_id) REFERENCES restaurant (id) ON DELETE CASCADE
 );
 
-CREATE TABLE menuItem
+CREATE TABLE menu_item
 (
     dish_id INTEGER            NOT NULL,
     date    DATE DEFAULT CURRENT_DATE NOT NULL,
@@ -67,7 +66,7 @@ CREATE TABLE menuItem
 
 DELETE FROM user_role;
 DELETE FROM vote;
-DELETE FROM menuItem;
+DELETE FROM menu_item;
 DELETE FROM users;
 DELETE FROM dish;
 DELETE FROM restaurant;
@@ -91,16 +90,16 @@ VALUES ('kwakin', 'zvenigorodskaya street, 2/44'),
        ('market_place', 'nevskii avenue, 22'),
        ('dzamiko', 'admiralteiskaya street, 2');
 
-INSERT INTO dish (name, price, calories, restaurant_id)
-VALUES ('roast', 29900, 400, 5),
-       ('solyanka', 45005, 300, 5),
-       ('beet soup', 56002, 200, 5),
-       ('dressed herring', 32300, 300, 6),
-       ('goulash', 61002, 100, 6),
-       ('open sandwich', 21005, 400, 6),
-       ('pizza', 46400, 600, 7),
-       ('kebab', 73100, 500, 7),
-       ('hot dog', 33200, 200, 7);
+INSERT INTO dish (name, price, restaurant_id)
+VALUES ('roast', 29900, 5),
+       ('solyanka', 45005, 5),
+       ('beet soup', 56002, 5),
+       ('dressed herring', 32300, 6),
+       ('goulash', 61002, 6),
+       ('open sandwich', 21005, 6),
+       ('pizza', 46400, 7),
+       ('kebab', 73100, 7),
+       ('hot dog', 33200, 7);
 
 INSERT INTO vote (user_id, restaurant_id, vote_date)
 VALUES (1, 5, '2024-01-29'),
@@ -113,7 +112,7 @@ VALUES (1, 5, '2024-01-29'),
        (4, 7, CURRENT_DATE);
 
 
-INSERT INTO menuItem (dish_id, date)
+INSERT INTO menu_item (dish_id, date)
 VALUES (8, '2024-01-29'),
        (9, '2024-01-29'),
        (10, '2024-01-29'),
