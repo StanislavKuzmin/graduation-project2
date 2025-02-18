@@ -11,9 +11,9 @@ CREATE SEQUENCE global_seq START WITH 1;
 CREATE TABLE users
 (
     id         INTEGER DEFAULT nextval('global_seq') PRIMARY KEY,
-    name       VARCHAR                           NOT NULL,
-    email      VARCHAR                           NOT NULL,
-    password   VARCHAR                           NOT NULL,
+    name       VARCHAR(255)                           NOT NULL,
+    email      VARCHAR(50)                            NOT NULL,
+    password   VARCHAR(255)                            NOT NULL,
     registered TIMESTAMP           DEFAULT CURRENT_TIMESTAMP NOT NULL,
     enabled    BOOL                DEFAULT TRUE  NOT NULL
 );
@@ -30,8 +30,8 @@ CREATE TABLE user_role
 CREATE TABLE restaurant
 (
     id      INTEGER DEFAULT nextval('global_seq') PRIMARY KEY,
-    name    VARCHAR NOT NULL,
-    address VARCHAR NOT NULL,
+    name    VARCHAR(255)  NOT NULL,
+    address VARCHAR(255)  NOT NULL,
     CONSTRAINT restaurant_unique_name_address_idx UNIQUE (name, address)
 );
 
@@ -49,7 +49,7 @@ CREATE INDEX vote_restaurant_idx ON vote (restaurant_id);
 CREATE TABLE dish
 (
     id            INTEGER DEFAULT nextval('global_seq') PRIMARY KEY,
-    name          VARCHAR        NOT NULL,
+    name          VARCHAR(255)         NOT NULL,
     price         INTEGER        NOT NULL,
     restaurant_id INTEGER        NOT NULL,
     is_excluded_from_menu BOOL DEFAULT FALSE  NOT NULL,
