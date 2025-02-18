@@ -56,7 +56,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-                .requestMatchers(HttpMethod.GET, "/api/restaurants/votes/today").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/votes/today").permitAll()
                 .requestMatchers("/api/admin/**").hasRole(Role.ADMIN.name())
                 .requestMatchers(HttpMethod.POST, "/api/profile").anonymous()
                 .requestMatchers("/api/**").hasAnyRole(Role.ADMIN.name(), Role.USER.name())

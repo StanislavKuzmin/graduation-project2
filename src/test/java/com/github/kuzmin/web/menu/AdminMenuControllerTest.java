@@ -1,5 +1,8 @@
 package com.github.kuzmin.web.menu;
 
+import com.github.kuzmin.repository.MenuRepository;
+import com.github.kuzmin.web.AbstractControllerTest;
+import com.github.kuzmin.web.dish.DishTestData;
 import com.github.kuzmin.web.restaurant.AdminRestaurantController;
 import com.github.kuzmin.web.user.UserTestData;
 import org.junit.jupiter.api.Test;
@@ -7,59 +10,65 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import com.github.kuzmin.repository.MenuRepository;
-import com.github.kuzmin.web.AbstractControllerTest;
 
+import java.time.LocalDate;
+
+import static com.github.kuzmin.web.dish.DishTestData.dish1_rest1;
+import static com.github.kuzmin.web.dish.DishTestData.dish2_rest1;
+import static com.github.kuzmin.web.restaurant.RestaurantTestData.RESTAURANT1_ID;
+import static com.github.kuzmin.web.restaurant.RestaurantTestData.RESTAURANT2_ID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static com.github.kuzmin.web.dish.DishTestData.*;
-import static com.github.kuzmin.web.restaurant.RestaurantTestData.RESTAURANT1_ID;
 
 class AdminMenuControllerTest extends AbstractControllerTest {
 
     @Autowired
     MenuRepository repository;
-    private static final String REST_URL_SLASH = AdminRestaurantController.REST_URL + '/' + RESTAURANT1_ID + "/menu" + '/';
     private static final String REST_URL = AdminRestaurantController.REST_URL + '/' + RESTAURANT1_ID + "/menu";
 
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void addToTodayMenu() throws Exception {
-        perform(MockMvcRequestBuilders.post(REST_URL_SLASH + "add")
-                .param("dishesIndex[]", MenuTestData.indexes))
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .param("dishId", dish2_rest1.getId().toString())
+                .param("date", LocalDate.now().toString()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MenuTestData.MENU_MATCHER.contentJson(MenuTestData.MENU_ITEM_2, MenuTestData.MENU_ITEM_3));
+                .andExpect(MenuTestData.MENU_MATCHER.contentJson(MenuTestData.MENU_ITEM_2));
     }
 
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void deleteFromTodayMenu() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL)
-                .param("id", String.valueOf(DISH1_ID)))
+                .param("dishId", dish1_rest1.getId().toString())
+                .param("date", LocalDate.now().toString()))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        assertFalse(repository.existsByMenu(MenuTestData.MENU_ITEM_1.getId()));
+        assertFalse(repository.existsByMenu(dish1_rest1.getId(), LocalDate.now(), RESTAURANT2_ID));
     }
 
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void addToTodayMenuDuplicate() throws Exception {
-        perform(MockMvcRequestBuilders.post(REST_URL_SLASH + "add")
-                .param("dishesIndex[]", dish1_rest1.getId().toString()))
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .param("dishId", dish1_rest1.getId().toString())
+                .param("date", LocalDate.now().toString()))
                 .andDo(print())
-                .andExpect(status().isConflict());
+                .andExpect(status().isOk())
+                .andExpect(content().string(""));
     }
 
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void addToTodayMenuNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.post(REST_URL_SLASH + "add")
-                .param("dishesIndex[]", String.valueOf(NOT_FOUND)))
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .param("dishId", String.valueOf(DishTestData.NOT_FOUND))
+                .param("date", LocalDate.now().toString()))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
@@ -68,27 +77,8 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void deleteFromTodayMenuNotFound() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL)
-                .param("id", String.valueOf(dish2_rest1.id())))
-                .andDo(print())
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    @WithUserDetails(value = UserTestData.ADMIN_MAIL)
-    void addToMenuFromDate() throws Exception {
-        perform(MockMvcRequestBuilders.post(REST_URL_SLASH + "add-from-date")
-                .param("date", "2024-01-30"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MenuTestData.MENU_MATCHER.contentJson(MenuTestData.MENU_ITEM_3, MenuTestData.MENU_ITEM_2));
-    }
-
-    @Test
-    @WithUserDetails(value = UserTestData.ADMIN_MAIL)
-    void addToMenuFromDateNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.post(REST_URL_SLASH + "add-from-date")
-                .param("date", "2024-01-31"))
+                .param("dishId", String.valueOf(dish2_rest1.id()))
+                .param("date", LocalDate.now().toString()))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
@@ -96,8 +86,9 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = UserTestData.USER_MAIL)
     void addToTodayMenuForbidden() throws Exception {
-        perform(MockMvcRequestBuilders.post(REST_URL_SLASH + "add")
-                .param("dishesIndex[]", MenuTestData.indexes))
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .param("dishId", dish2_rest1.getId().toString())
+                .param("date", LocalDate.now().toString()))
                 .andDo(print())
                 .andExpect(status().isForbidden());
     }
@@ -106,7 +97,8 @@ class AdminMenuControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = UserTestData.USER_MAIL)
     void deleteFromTodayMenuForbidden() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL)
-                .param("id", String.valueOf(DISH1_ID)))
+                .param("dishId", dish1_rest1.getId().toString())
+                .param("date", LocalDate.now().toString()))
                 .andDo(print())
                 .andExpect(status().isForbidden());
     }

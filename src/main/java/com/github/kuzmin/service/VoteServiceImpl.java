@@ -18,10 +18,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.github.kuzmin.to.VoteTo.fromEntity;
-import static com.github.kuzmin.util.validation.ValidationUtil.checkNotFound;
 import static com.github.kuzmin.util.validation.ValidationUtil.checkNotFoundWithId;
 
 @Service
@@ -46,15 +46,18 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     public RestaurantVoteTo getVoteForRestaurantByDate(LocalDate date, int restaurantId) {
+        if (date.isAfter(timeProvider.getCurrentDate())) {
+            throw new DataConflictException("Date is after than current date");
+        }
         return RestaurantVoteTo.fromEntities(voteRepository.getRestaurantVotesByDate(restaurantId, date));
     }
 
     @Override
     public VoteTo vote(int restaurantId, int userId) {
         LocalDate date = timeProvider.getCurrentDate();
-        Vote vote = voteRepository.getUserVoteByDate(date, userId);
+        Optional<Vote> optVote = voteRepository.getUserVoteByDate(date, userId);
         Restaurant restaurant = checkNotFoundWithId(restaurantRepository.getReferenceById(restaurantId), restaurantId);
-        if (vote == null) {
+        if (optVote.isEmpty()) {
             log.info("user with id={} first time vote for restaurant with id={}", userId, restaurantId);
             return fromEntity(voteRepository.save(new Vote(null, userRepository.getReferenceById(userId),
                     restaurant,
@@ -69,10 +72,11 @@ public class VoteServiceImpl implements VoteService {
             throw new DataConflictException("You can't change your decision, because the time is more than 11.00");
         }
         LocalDate date = timeProvider.getCurrentDate();
-        Vote vote = voteRepository.getUserVoteByDate(date, userId);
+        Optional<Vote> optVote = voteRepository.getUserVoteByDate(date, userId);
         Restaurant restaurant = checkNotFoundWithId(restaurantRepository.getReferenceById(restaurantId), restaurantId);
-        if (vote != null) {
+        if (optVote.isPresent()) {
             log.info("user with id={} changed his voice for restaurant with id={}", userId, restaurantId);
+            Vote vote = optVote.get();
             vote.setRestaurant(restaurant);
             return fromEntity(voteRepository.save(vote));
         }
@@ -81,6 +85,7 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     public UserVoteTo getUserVoteByDate(LocalDate date, int userId) {
-        return UserVoteTo.fromEntity(voteRepository.getUserVoteByDate(date, userId));
+        Optional<Vote> optVote = voteRepository.getUserVoteByDate(date, userId);
+        return optVote.map(UserVoteTo::fromEntity).orElse(null);
     }
 }

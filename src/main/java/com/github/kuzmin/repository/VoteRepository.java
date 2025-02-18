@@ -1,9 +1,6 @@
 package com.github.kuzmin.repository;
 
-import com.github.kuzmin.error.NotFoundException;
 import com.github.kuzmin.model.Vote;
-import com.github.kuzmin.to.VoteTo;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +13,7 @@ import java.util.Optional;
 public interface VoteRepository extends BaseRepository<Vote> {
 
     @Query("SELECT v FROM Vote v WHERE v.user.id = :userId AND v.voteDate = :date")
-    Vote getUserVoteByDate(@Param("date") LocalDate date,
+    Optional<Vote> getUserVoteByDate(@Param("date") LocalDate date,
                            @Param("userId") int userId);
 
     @Query("SELECT v FROM Vote v WHERE v.voteDate = :date")

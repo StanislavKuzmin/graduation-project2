@@ -1,16 +1,16 @@
 package com.github.kuzmin.web.vote;
 
+import com.github.kuzmin.web.AbstractControllerTest;
 import com.github.kuzmin.web.user.ProfileController;
 import com.github.kuzmin.web.user.UserTestData;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import com.github.kuzmin.web.AbstractControllerTest;
 
+import static com.github.kuzmin.web.vote.VoteTestData.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static com.github.kuzmin.web.vote.VoteTestData.*;
 
 class UserVoteControllerTest extends AbstractControllerTest {
 
@@ -22,33 +22,24 @@ class UserVoteControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "today"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(voteTo6));
+                .andExpect(USER_VOTE_TO_MATCHER.contentJson(anotherUserVoteToNow));
     }
 
     @Test
     @WithUserDetails(value = UserTestData.ANOTHER_USER_MAIL)
     void getVoteHistory() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "history")
-                .param("startDate", "2024-01-29").param("endDate", "2024-01-30"))
+                .param("date", "2024-01-29"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(voteTo8, voteTo7));
+                .andExpect(USER_VOTE_TO_MATCHER.contentJson(anotherUserVoteToPast));
     }
 
     @Test
-    @WithUserDetails(value = UserTestData.USER_MAIL)
+    @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void getNotVoteToday() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "today"))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    @WithUserDetails(value = UserTestData.ANOTHER_USER_MAIL)
-    void getVoteHistoryWithoutStart() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "history")
-                .param("endDate", "2024-01-30"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(voteTo8, voteTo7));
+                .andExpect(content().string(""));
     }
 }

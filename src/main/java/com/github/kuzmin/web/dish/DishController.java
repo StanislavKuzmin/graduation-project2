@@ -34,9 +34,9 @@ public class DishController {
 
     @GetMapping("/{id}")
     public DishTo get(@PathVariable int restaurantId, @PathVariable int id) {
-        log.info("get dish {} of restaurant with if {}", id, restaurantId);
+        log.info("get dish {} of restaurant with id {}", id, restaurantId);
         return fromDish(checkNotFound(dishRepository.get(id, restaurantId), "id=" + id
                 + " or doesn't belong to restaurant with id=" + restaurantId
-                + "or excluded from menu"));
+                + " or excluded from menu"));
     }
 }

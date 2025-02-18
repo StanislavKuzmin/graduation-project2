@@ -1,5 +1,6 @@
 package com.github.kuzmin.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.github.kuzmin.util.validation.NoHtml;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
@@ -18,7 +19,7 @@ import java.util.List;
 @Table(name = "restaurant")
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class Restaurant extends NamedEntity {
 
     @NotBlank
@@ -29,6 +30,7 @@ public class Restaurant extends NamedEntity {
 
     @OneToMany(mappedBy = "restaurant", fetch = FetchType.LAZY, orphanRemoval = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonManagedReference
     @Hidden
     private List<Dish> dishes;
 

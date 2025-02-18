@@ -1,9 +1,10 @@
 package com.github.kuzmin.web.vote;
 
+import com.github.kuzmin.config.TimeProvider;
 import com.github.kuzmin.model.Vote;
-import com.github.kuzmin.util.VoteUtil;
-import com.github.kuzmin.web.restaurant.RestaurantController;
-import com.github.kuzmin.web.restaurant.RestaurantTestData;
+import com.github.kuzmin.repository.VoteRepository;
+import com.github.kuzmin.to.VoteTo;
+import com.github.kuzmin.web.AbstractControllerTest;
 import com.github.kuzmin.web.user.UserTestData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -20,22 +21,21 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.threeten.extra.MutableClock;
-import com.github.kuzmin.repository.VoteRepository;
-import com.github.kuzmin.web.AbstractControllerTest;
 
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 
+import static com.github.kuzmin.web.restaurant.RestaurantTestData.*;
+import static com.github.kuzmin.web.vote.VoteTestData.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static com.github.kuzmin.web.vote.VoteTestData.*;
 
 @ContextConfiguration(classes = VoteControllerTest.CustomClockConfiguration.class)
 class VoteControllerTest extends AbstractControllerTest {
     private static final LocalDateTime TEST_DATE_TIME = LocalDateTime.of(2024, 1, 30, 10, 0);
-    private static final String REST_URL_SLASH = RestaurantController.REST_URL + VoteController.REST_URL + '/';
-    private static final String REST_URL = RestaurantController.REST_URL + VoteController.REST_URL;
+    private static final String REST_URL_SLASH = VoteController.REST_URL + '/';
+    private static final String REST_URL = VoteController.REST_URL;
     @Autowired
     private VoteRepository repository;
 
@@ -43,6 +43,8 @@ class VoteControllerTest extends AbstractControllerTest {
     private Clock clock;
     @Autowired
     private MutableClock mutableClock;
+    @Autowired
+    private TimeProvider timeProvider;
 
     @AfterEach
     void resetClock() {
@@ -51,54 +53,49 @@ class VoteControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = UserTestData.USER_MAIL)
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     void voteFirstTime() throws Exception {
         mutableClock.add(1L, ChronoUnit.DAYS);
-        Vote newVote = VoteTestData.getNew();
         ResultActions actions = perform(MockMvcRequestBuilders.post(REST_URL)
-                .param("restaurantId", Integer.toString(RestaurantTestData.RESTAURANT1_ID)))
+                .param("restaurantId", Integer.toString(RESTAURANT1_ID)))
                 .andDo(print())
                 .andExpect(status().isOk());
-        Vote created = VOTE_MATCHER.readFromJson(actions);
-        VOTE_MATCHER.assertMatch(created, newVote);
-        created.setUser(UserTestData.user);
-        VOTE_TO_MATCHER.assertMatch(repository.getUserVoteToday(created.getId()), VoteUtil.createTo(created));
+        VoteTo created = VOTE_TO_MATCHER.readFromJson(actions);
+        VOTE_TO_MATCHER.assertMatch(VoteTo.fromEntity(repository.getUserVoteByDate(timeProvider.getCurrentDate(), UserTestData.USER_ID).get()), created);
     }
 
     @Test
     void getAllVoteToday() throws Exception {
+        LocalDate date = timeProvider.getCurrentDate();
         perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "today"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(voteTo3, voteTo1, voteTo2));
+                .andExpect(RESTAURANT_VOTE_TO_MATCHER.contentJson(getRestaurantVoteTo(date, restaurant3, 1L),
+                        getRestaurantVoteTo(date, restaurant1, 0L),
+                        getRestaurantVoteTo(date, restaurant2, 2L)));
     }
 
     @Test
     @WithUserDetails(value = UserTestData.USER_MAIL)
     void getVoteHistory() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + RestaurantTestData.RESTAURANT2_ID + "/history")
-                .param("startDate", "2024-01-29").param("endDate", "2024-01-30"))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + RESTAURANT2_ID + "/history")
+                .param("date", "2024-01-29"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(voteTo5, voteTo4));
+                .andExpect(RESTAURANT_VOTE_TO_MATCHER.contentJson(getRestaurantVoteTo(LocalDate.of(2024, 1, 29), restaurant2, 1L)));
     }
 
     @Test
     @WithUserDetails(value = UserTestData.USER_MAIL)
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     void changeVoteBeforeDeadLine() throws Exception {
-        Vote earlyVote = getEarlyVote();
-        VOTE_TO_MATCHER.assertMatch(repository.getUserVoteToday(earlyVote.getId()), VoteUtil.createTo(earlyVote));
-        Vote changeVote = new Vote(UserTestData.USER_ID, LocalDate.of(2024, 1, 30));
-        changeVote.setRestaurant(RestaurantTestData.restaurant1);
-        ResultActions actions = perform(MockMvcRequestBuilders.post(REST_URL)
-                .param("restaurantId", Integer.toString(RestaurantTestData.RESTAURANT1_ID)))
+        Vote changeVote = getEarlyVote();
+        changeVote.setRestaurant(restaurant1);
+        ResultActions actions = perform(MockMvcRequestBuilders.put(REST_URL)
+                .param("restaurantId", Integer.toString(RESTAURANT1_ID)))
                 .andDo(print())
                 .andExpect(status().isOk());
-        Vote created = VOTE_MATCHER.readFromJson(actions);
-        VOTE_MATCHER.assertMatch(created, changeVote);
-        created.setUser(UserTestData.user);
-        VOTE_TO_MATCHER.assertMatch(repository.getUserVoteToday(created.getId()), VoteUtil.createTo(created));
+        VoteTo created = VOTE_TO_MATCHER.readFromJson(actions);
+        VOTE_TO_MATCHER.assertMatch(created, VoteTo.fromEntity(changeVote));
     }
 
     @Test
@@ -106,20 +103,10 @@ class VoteControllerTest extends AbstractControllerTest {
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     void voteAfterDeadLine() throws Exception {
         mutableClock.add(3L, ChronoUnit.HOURS);
-        perform(MockMvcRequestBuilders.post(REST_URL)
-                .param("restaurantId", Integer.toString(RestaurantTestData.RESTAURANT1_ID)))
+        perform(MockMvcRequestBuilders.put(REST_URL)
+                .param("restaurantId", Integer.toString(RESTAURANT1_ID)))
                 .andDo(print())
                 .andExpect(status().isConflict());
-    }
-
-    @Test
-    @WithUserDetails(value = UserTestData.USER_MAIL)
-    void getVoteHistoryWithoutStart() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + RestaurantTestData.RESTAURANT2_ID + "/history")
-                .param("endDate", "2024-01-30"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(voteTo5, voteTo4));
     }
 
     @Test
@@ -128,7 +115,7 @@ class VoteControllerTest extends AbstractControllerTest {
     void voteFirstTimeForbidden() throws Exception {
         mutableClock.add(1L, ChronoUnit.DAYS);
         perform(MockMvcRequestBuilders.post(REST_URL)
-                .param("restaurantId", Integer.toString(RestaurantTestData.RESTAURANT1_ID)))
+                .param("restaurantId", Integer.toString(RESTAURANT1_ID)))
                 .andDo(print())
                 .andExpect(status().isForbidden());
     }

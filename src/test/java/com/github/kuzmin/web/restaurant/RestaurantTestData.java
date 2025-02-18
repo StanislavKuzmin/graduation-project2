@@ -13,7 +13,7 @@ public class RestaurantTestData {
 
     public static final MatcherFactory.Matcher<Restaurant> RESTAURANT_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Restaurant.class, "dishes");
     public static final MatcherFactory.Matcher<Restaurant> RESTAURANT_MATCHER_WITH_DISHES = MatcherFactory.usingAssertions(Restaurant.class,
-            (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("dishes.restaurantId").isEqualTo(e),
+            (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("dishes.restaurant").isEqualTo(e),
             (a, e) -> {
                 throw new UnsupportedOperationException();
             });
@@ -27,14 +27,18 @@ public class RestaurantTestData {
     public static final Restaurant restaurant3 = new Restaurant(RESTAURANT3_ID, "dzamiko", "admiralteiskaya street, 2");
 
     static {
-        restaurant1.setDishes(List.of(DishTestData.dish1_rest1, DishTestData.dish2_rest1, DishTestData.dish3_rest1));
+        restaurant1.setDishes(List.of(DishTestData.dish3_rest1, DishTestData.dish1_rest1, DishTestData.dish2_rest1));
     }
 
-    public static Restaurant getNew() {
-        return new Restaurant(null, "cucumber", "cosmonavtov avenue, 2");
+    public static RestaurantTo getNew() {
+        return new RestaurantTo(null, "cucumber", "cosmonavtov avenue, 2");
     }
 
-    public static Restaurant getUpdated() {
-        return new Restaurant(RESTAURANT3_ID, "dzamiko", "nevskii avenue, 33");
+    public static RestaurantTo getUpdated() {
+        return new RestaurantTo(RESTAURANT3_ID, "dzamiko", "nevskii avenue, 33");
+    }
+
+    public static RestaurantTo getNewNotValid() {
+        return new RestaurantTo(null, "cucumber", null);
     }
 }

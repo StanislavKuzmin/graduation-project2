@@ -2,15 +2,11 @@ package com.github.kuzmin.repository;
 
 import com.github.kuzmin.error.NotFoundException;
 import com.github.kuzmin.model.Restaurant;
-import com.github.kuzmin.to.RestaurantTo;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 public interface RestaurantRepository extends BaseRepository<Restaurant> {
@@ -21,7 +17,7 @@ public interface RestaurantRepository extends BaseRepository<Restaurant> {
     @Query("SELECT r FROM Restaurant r WHERE r.name = :name")
     Optional<Restaurant> findByName(String name);
 
-    @Query("SELECT r FROM Restaurant r WHERE r.name = LOWER(:name) AND r.address = LOWER(:address)")
+    @Query("SELECT r FROM Restaurant r WHERE r.name = :name AND r.address = :address")
     Optional<Restaurant> findByNameAndAddress(String name, String address);
 
     default Restaurant getExistedByName(String name) {

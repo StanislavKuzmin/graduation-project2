@@ -76,6 +76,6 @@ public class MenuServiceImpl implements MenuService {
 
     private boolean isDateAfterOrEqual(LocalDate date) {
         LocalDate currentDate = timeProvider.getCurrentDate();
-        return date.isAfter(currentDate) || date.isEqual(currentDate);
+        return !date.isAfter(currentDate) && !date.isEqual(currentDate);
     }
 }

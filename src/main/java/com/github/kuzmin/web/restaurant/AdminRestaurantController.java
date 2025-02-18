@@ -21,6 +21,7 @@ import java.net.URI;
 
 import static com.github.kuzmin.to.RestaurantTo.fromTo;
 import static com.github.kuzmin.to.RestaurantTo.newFromTo;
+import static com.github.kuzmin.util.validation.ValidationUtil.assureIdConsistent;
 
 @RestController
 @RequestMapping(value = AdminRestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -51,7 +52,7 @@ public class AdminRestaurantController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@RequestBody @Valid RestaurantTo restaurantTo, @PathVariable int id) {
         log.info("update restaurant {} with id={}", restaurantTo, id);
-        ValidationUtil.assureIdConsistent(restaurantTo, id);
+        assureIdConsistent(restaurantTo, id);
         restaurantRepository.save(fromTo(restaurantTo));
     }
 

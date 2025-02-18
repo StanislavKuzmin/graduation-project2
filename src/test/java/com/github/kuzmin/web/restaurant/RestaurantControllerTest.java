@@ -1,17 +1,17 @@
 package com.github.kuzmin.web.restaurant;
 
-import com.github.kuzmin.util.RestaurantUtil;
+import com.github.kuzmin.web.AbstractControllerTest;
 import com.github.kuzmin.web.user.UserTestData;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import com.github.kuzmin.web.AbstractControllerTest;
 
+import static com.github.kuzmin.to.RestaurantTo.fromEntity;
+import static com.github.kuzmin.web.restaurant.RestaurantTestData.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static com.github.kuzmin.web.restaurant.RestaurantTestData.*;
 
 class RestaurantControllerTest extends AbstractControllerTest {
 
@@ -23,7 +23,7 @@ class RestaurantControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(RestaurantController.REST_URL))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(RESTAURANT_TO_MATCHER.contentJson(RestaurantUtil.createTo(restaurant3), RestaurantUtil.createTo(restaurant1), RestaurantUtil.createTo(restaurant2)));
+                .andExpect(RESTAURANT_TO_MATCHER.contentJson(fromEntity(restaurant3), fromEntity(restaurant1), fromEntity(restaurant2)));
     }
 
     @Test
@@ -33,7 +33,7 @@ class RestaurantControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(RESTAURANT_MATCHER.contentJson(restaurant1));
+                .andExpect(RESTAURANT_TO_MATCHER.contentJson(fromEntity(restaurant1)));
     }
 
     @Test
@@ -43,7 +43,7 @@ class RestaurantControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(RESTAURANT_MATCHER.contentJson(restaurant2));
+                .andExpect(RESTAURANT_TO_MATCHER.contentJson(fromEntity(restaurant2)));
     }
 
     @Test

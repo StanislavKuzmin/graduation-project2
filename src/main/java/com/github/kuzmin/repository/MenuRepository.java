@@ -14,7 +14,8 @@ public interface MenuRepository extends BaseRepository<MenuItem> {
 
     @Transactional
     @Modifying
-    @Query("DELETE FROM MenuItem m WHERE m.dish.id=:dishId AND m.dish.restaurant.id=:restaurantId AND m.date =:date")
+    @Query(value = "DELETE FROM menu_item WHERE menu_item.id IN (SELECT menu_item.id FROM menu_item LEFT JOIN dish ON menu_item.dish_id = dish.id" +
+            " WHERE menu_item.dish_id =:dishId AND dish.restaurant_id=:restaurantId AND menu_item.date=:date)", nativeQuery = true)
     int delete(@Param("dishId") Integer dishId, @Param("restaurantId") Integer restaurantId, @Param("date") LocalDate date);
 
     @Query("SELECT m FROM MenuItem m WHERE m.dish.restaurant.id =:restaurantId AND m.date =:date AND m.dish.isExcludedFromMenu = false" +

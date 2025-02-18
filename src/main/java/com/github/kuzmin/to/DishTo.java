@@ -14,14 +14,12 @@ public class DishTo extends NamedTo {
 
     @Column(name = "price", nullable = false)
     @NotNull
-    @Range(max = 5000)
+    @Range(min = 10000)
     Integer price;
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-    @NotNull
     Integer restaurantId;
 
-    @NotNull
     Boolean isExcludedFromMenu;
 
     public DishTo(Integer id, String name, Integer price, Integer restaurantId, Boolean isExcludedFromMenu) {

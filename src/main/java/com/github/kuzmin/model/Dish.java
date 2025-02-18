@@ -1,16 +1,19 @@
 package com.github.kuzmin.model;
 
-import io.swagger.v3.oas.annotations.Hidden;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Range;
 
 @Entity
 @Table(name = "dish")
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class Dish extends NamedEntity {
 
     @Column(name = "price", nullable = false)
@@ -20,6 +23,7 @@ public class Dish extends NamedEntity {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "restaurant_id")
+    @JsonBackReference
     private Restaurant restaurant;
 
     @Column(name = "is_excluded_from_menu", columnDefinition = "boolean default false")
@@ -28,6 +32,12 @@ public class Dish extends NamedEntity {
     public Dish(Integer id, String name, Integer price) {
         super(id, name);
         this.price = price;
+        this.isExcludedFromMenu = false;
+    }
+    public Dish(Integer id, String name, Restaurant restaurant, Integer price) {
+        super(id, name);
+        this.price = price;
+        this.restaurant = restaurant;
         this.isExcludedFromMenu = false;
     }
 

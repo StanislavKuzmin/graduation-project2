@@ -1,6 +1,7 @@
 package com.github.kuzmin.web.dish;
 
 import com.github.kuzmin.model.Dish;
+import com.github.kuzmin.repository.DishRepository;
 import com.github.kuzmin.repository.RestaurantRepository;
 import com.github.kuzmin.to.DishTo;
 import com.github.kuzmin.util.validation.ValidationUtil;
@@ -16,12 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import com.github.kuzmin.repository.DishRepository;
 
 import java.net.URI;
 
 import static com.github.kuzmin.util.DishUtil.createFromTo;
-import static com.github.kuzmin.util.DishUtil.updateFromTo;
+import static com.github.kuzmin.util.validation.ValidationUtil.checkNotFoundWithId;
 
 @RestController
 @RequestMapping(value = AdminDishController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -33,21 +33,21 @@ public class AdminDishController {
     public static final String REST_URL = AdminRestaurantController.REST_URL + DishController.REST_URL;
     private final DishRepository dishRepository;
     private final RestaurantRepository restaurantRepository;
-    private final UniqueNameValidator validator;
+    private final UniqueDishValidator validator;
 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
         binder.addValidators(validator);
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    public void update(@PathVariable int restaurantId, @Valid @RequestBody DishTo dishTo, @PathVariable int id) {
-        log.info("update dish: {} with id={}", dishTo, id);
-        ValidationUtil.assureIdConsistent(dishTo, id);
-        Dish dish = dishRepository.get(id, restaurantId);
-        dishRepository.save(updateFromTo(dish, dishTo));
+    public void excludedFromMenu(@PathVariable int restaurantId, @PathVariable int id, @RequestParam String isExcludeFromMenu) {
+        log.info("exclude from menu of restaurant={} dish with id={}", restaurantId, id);
+        Dish dish = checkNotFoundWithId(dishRepository.get(id, restaurantId), id);
+        dish.setIsExcludedFromMenu(Boolean.valueOf(isExcludeFromMenu));
+        dishRepository.save(dish);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

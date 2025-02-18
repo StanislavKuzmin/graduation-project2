@@ -15,9 +15,7 @@ import static com.github.kuzmin.web.dish.DishTestData.*;
 
 public class MenuTestData {
 
-    public static final MatcherFactory.Matcher<MenuItem> MENU_MATCHER = MatcherFactory.usingAssertions(MenuItem.class,
-            (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("dish.restaurant").isEqualTo(e),
-            (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("dish.restaurant").isEqualTo(e));
+    public static final MatcherFactory.Matcher<MenuItem> MENU_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(MenuItem.class, "id", "dish.restaurant");
 
     public static final MatcherFactory.Matcher<MenuTo> MENU_TO_MATCHER = MatcherFactory.usingAssertions(MenuTo.class,
             (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("dishTo.restaurantTo").isEqualTo(e),
@@ -30,8 +28,6 @@ public class MenuTestData {
     public static final MenuItem MENU_ITEM_3 = new MenuItem(MENU_ITEM1_ID + 2, dish3_rest1, LocalDate.now());
     public static final MenuTo menuTo1 = new MenuTo(LocalDate.now(), List.of(fromDish(dish1_rest1)), fromEntity(restaurant1));
     public static final MenuTo menuTo2 = new MenuTo(LocalDate.now(), List.of(fromDish(dish4_rest2), fromDish(dish6_rest2)), fromEntity(restaurant2));
+    public static final MenuTo byDateMenuTo2 = new MenuTo(LocalDate.of(2024, 1, 30), List.of(fromDish(dish5_rest2), fromDish(dish6_rest2)), fromEntity(restaurant2));
     public static final MenuTo menuTo3 = new MenuTo(LocalDate.now(), List.of(fromDish(dish7_rest3), fromDish(dish8_rest3), fromDish(dish9_rest3)), fromEntity(restaurant3));
-    public static final String[] indexes = new String[] {dish1_rest1.getId().toString(), dish2_rest1.getId().toString(), dish3_rest1.getId().toString()};
-
-
 }

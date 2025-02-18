@@ -1,36 +1,30 @@
 package com.github.kuzmin.web.vote;
 
+import com.github.kuzmin.model.Restaurant;
 import com.github.kuzmin.model.Vote;
+import com.github.kuzmin.to.RestaurantTo;
+import com.github.kuzmin.to.RestaurantVoteTo;
+import com.github.kuzmin.to.UserVoteTo;
 import com.github.kuzmin.to.VoteTo;
+import com.github.kuzmin.util.UsersUtil;
+import com.github.kuzmin.web.MatcherFactory;
 import com.github.kuzmin.web.restaurant.RestaurantTestData;
 import com.github.kuzmin.web.user.UserTestData;
-import com.github.kuzmin.web.MatcherFactory;
 
 import java.time.LocalDate;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class VoteTestData {
-    public static final MatcherFactory.Matcher<Vote> VOTE_MATCHER = MatcherFactory.usingAssertions(Vote.class,
-            (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("restaurant.dishes").isEqualTo(e),
-            (a, e) -> {
-                throw new UnsupportedOperationException();
-            });
     public static final MatcherFactory.Matcher<VoteTo> VOTE_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(VoteTo.class);
-    public static final VoteTo voteTo1 = new VoteTo(LocalDate.of(2024, 1, 30), RestaurantTestData.restaurant1);
-    public static final VoteTo voteTo2 = new VoteTo(LocalDate.of(2024, 1, 30), 2L, RestaurantTestData.restaurant2);
-    public static final VoteTo voteTo3 = new VoteTo(LocalDate.of(2024, 1, 30), 1L, RestaurantTestData.restaurant3);
-    public static final VoteTo voteTo4 = new VoteTo(LocalDate.of(2024, 1, 29), 1L, RestaurantTestData.restaurant2);
-    public static final VoteTo voteTo5 = new VoteTo(LocalDate.of(2024, 1, 30), 2L, RestaurantTestData.restaurant2);
-    public static final VoteTo voteTo6 = new VoteTo(LocalDate.now(), UserTestData.another_user, RestaurantTestData.restaurant3);
-    public static final VoteTo voteTo7 = new VoteTo(LocalDate.of(2024, 1, 29), UserTestData.another_user, RestaurantTestData.restaurant1);
-    public static final VoteTo voteTo8 = new VoteTo(LocalDate.of(2024, 1, 30), UserTestData.another_user, RestaurantTestData.restaurant3);
-
-    public static Vote getNew() {
-        return new Vote(null, UserTestData.user, RestaurantTestData.restaurant1, LocalDate.of(2024, 1, 31));
-    }
+    public static final MatcherFactory.Matcher<RestaurantVoteTo> RESTAURANT_VOTE_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(RestaurantVoteTo.class);
+    public static final MatcherFactory.Matcher<UserVoteTo> USER_VOTE_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(UserVoteTo.class);
+    public static final UserVoteTo anotherUserVoteToNow = new UserVoteTo(UsersUtil.createToWithoutPassword(UserTestData.another_user), RestaurantTo.fromEntity(RestaurantTestData.restaurant3), LocalDate.now());
+    public static final UserVoteTo anotherUserVoteToPast = new UserVoteTo(UsersUtil.createToWithoutPassword(UserTestData.another_user), RestaurantTo.fromEntity(RestaurantTestData.restaurant1), LocalDate.of(2024, 1, 29));
 
     public static Vote getEarlyVote() {
         return new Vote(30, UserTestData.user, RestaurantTestData.restaurant2, LocalDate.of(2024, 1, 30));
+    }
+
+    public static RestaurantVoteTo getRestaurantVoteTo(LocalDate date, Restaurant restaurant, Long votesNumber) {
+        return new RestaurantVoteTo(RestaurantTo.fromEntity(restaurant), votesNumber, date);
     }
 }

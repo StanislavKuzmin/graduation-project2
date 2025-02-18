@@ -20,7 +20,7 @@ class MenuControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = UserTestData.USER_MAIL)
-    void getTodayMenu() throws Exception {
+    void getTodayRestaurantMenu() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "today"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -30,13 +30,23 @@ class MenuControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = UserTestData.USER_MAIL)
-    void getHistoryMenu() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "history")
+    void getTodayAllMenu() throws Exception {
+        perform(MockMvcRequestBuilders.get(RestaurantController.REST_URL + "/menu" + '/' + "today"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MENU_TO_MATCHER.contentJson(menuTo1, menuTo2, menuTo3));
+    }
+
+    @Test
+    @WithUserDetails(value = UserTestData.USER_MAIL)
+    void getRestaurantMenuByDate() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "by-date")
                 .param("date", "2024-01-30"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MENU_TO_MATCHER.contentJson(menuTo2));
+                .andExpect(MENU_TO_MATCHER.contentJson(byDateMenuTo2));
     }
 
     @Test

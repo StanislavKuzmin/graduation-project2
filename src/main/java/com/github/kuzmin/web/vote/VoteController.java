@@ -21,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class VoteController {
 
-    public static final String REST_URL = "/votes";
+    public static final String REST_URL = "/api/votes";
     private final VoteService voteService;
     private final TimeProvider timeProvider;
 

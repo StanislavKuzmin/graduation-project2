@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS user_role;
-DROP TABLE IF EXISTS menuItem;
+DROP TABLE IF EXISTS menu_item;
 DROP TABLE IF EXISTS vote;
 DROP TABLE IF EXISTS dish;
 DROP TABLE IF EXISTS restaurant;
@@ -37,12 +37,12 @@ CREATE TABLE restaurant
 
 CREATE TABLE vote
 (
+    id      INTEGER DEFAULT nextval('global_seq') PRIMARY KEY,
     user_id       INTEGER            NOT NULL,
     restaurant_id INTEGER            NOT NULL,
     vote_date     DATE DEFAULT CURRENT_DATE NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    FOREIGN KEY (restaurant_id) REFERENCES restaurant (id) ON DELETE CASCADE,
-    CONSTRAINT user_date PRIMARY KEY (user_id, vote_date)
+    FOREIGN KEY (restaurant_id) REFERENCES restaurant (id) ON DELETE CASCADE
 );
 CREATE INDEX vote_restaurant_idx ON vote (restaurant_id);
 
@@ -52,15 +52,16 @@ CREATE TABLE dish
     name          VARCHAR        NOT NULL,
     price         INTEGER        NOT NULL,
     restaurant_id INTEGER        NOT NULL,
-    CONSTRAINT dish_restaurant_unique_name_idx UNIQUE (restaurant_id, name),
+    is_excluded_from_menu BOOL DEFAULT FALSE  NOT NULL,
+    CONSTRAINT dish_unique_idx UNIQUE (restaurant_id, name, price, is_excluded_from_menu),
     FOREIGN KEY (restaurant_id) REFERENCES restaurant (id) ON DELETE CASCADE
 );
 
 CREATE TABLE menu_item
 (
+    id      INTEGER DEFAULT nextval('global_seq') PRIMARY KEY,
     dish_id INTEGER            NOT NULL,
     date    DATE DEFAULT CURRENT_DATE NOT NULL,
-    CONSTRAINT dish_date_idx PRIMARY KEY (dish_id, date),
     FOREIGN KEY (dish_id) REFERENCES dish (id) ON DELETE CASCADE
 );
 
@@ -108,7 +109,7 @@ VALUES (1, 5, '2024-01-29'),
        (1, 6, '2024-01-30'),
        (2, 6, '2024-01-30'),
        (4, 7, '2024-01-30'),
-       (2, 5, CURRENT_DATE),
+       (1, 5, CURRENT_DATE),
        (4, 7, CURRENT_DATE);
 
 
