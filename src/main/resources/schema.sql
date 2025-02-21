@@ -57,6 +57,8 @@ CREATE TABLE dish
     FOREIGN KEY (restaurant_id) REFERENCES restaurant (id) ON DELETE CASCADE
 );
 
+CREATE INDEX dish_restaurant_idx ON dish (restaurant_id);
+
 CREATE TABLE menu_item
 (
     id      INTEGER DEFAULT nextval('global_seq') PRIMARY KEY,
@@ -109,6 +111,7 @@ VALUES (1, 5, '2024-01-29'),
        (1, 6, '2024-01-30'),
        (2, 6, '2024-01-30'),
        (4, 7, '2024-01-30'),
+       (1, 6, '2024-01-31'),
        (1, 5, CURRENT_DATE),
        (4, 7, CURRENT_DATE);
 

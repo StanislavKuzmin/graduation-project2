@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,7 @@ import static com.github.kuzmin.util.validation.ValidationUtil.checkNotFoundWith
 
 @RestController
 @RequestMapping(value = AdminDishController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@CacheConfig(cacheNames = {"menu"})
 @Slf4j
 @Tag(name = "Manage dishes of restaurants", description = "Create, update and delete dishes of restaurants")
 @RequiredArgsConstructor
@@ -43,6 +46,7 @@ public class AdminDishController {
     @PatchMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
+    @CacheEvict(allEntries = true)
     public void excludedFromMenu(@PathVariable int restaurantId, @PathVariable int id, @RequestParam String isExcludeFromMenu) {
         log.info("exclude from menu of restaurant={} dish with id={}", restaurantId, id);
         Dish dish = checkNotFoundWithId(dishRepository.get(id, restaurantId), id);
@@ -51,6 +55,7 @@ public class AdminDishController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @CacheEvict(allEntries = true)
     public ResponseEntity<Dish> createWithLocation(@Valid @RequestBody DishTo dishTo, @PathVariable int restaurantId) {
         log.info("create dish {}", dishTo);
         ValidationUtil.checkNew(dishTo);

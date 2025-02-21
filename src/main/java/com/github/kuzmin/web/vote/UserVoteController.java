@@ -3,17 +3,20 @@ package com.github.kuzmin.web.vote;
 import com.github.kuzmin.config.TimeProvider;
 import com.github.kuzmin.service.VoteService;
 import com.github.kuzmin.to.UserVoteTo;
+import com.github.kuzmin.web.AuthUser;
+import com.github.kuzmin.web.user.ProfileController;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.github.kuzmin.web.AuthUser;
-import com.github.kuzmin.web.user.ProfileController;
 
 import java.time.LocalDate;
+
+import static java.util.Optional.ofNullable;
 
 @RestController
 @RequestMapping(value = ProfileController.REST_URL + UserVoteController.REST_URL)
@@ -34,9 +37,9 @@ public class UserVoteController {
     }
 
     @GetMapping("/history")
-    public UserVoteTo getVoteByDate(@RequestParam LocalDate date) {
+    public ResponseEntity<UserVoteTo> getVoteByDate(@RequestParam LocalDate date) {
         int userId = AuthUser.authId();
         log.info("get vote history for user with id={}", userId);
-        return voteService.getUserVoteByDate(date, userId);
+        return ResponseEntity.of(ofNullable(voteService.getUserVoteByDate(date, userId)));
     }
 }

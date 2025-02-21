@@ -4,6 +4,7 @@ import com.github.kuzmin.config.TimeProvider;
 import com.github.kuzmin.model.Vote;
 import com.github.kuzmin.repository.VoteRepository;
 import com.github.kuzmin.to.VoteTo;
+import com.github.kuzmin.util.JsonUtil;
 import com.github.kuzmin.web.AbstractControllerTest;
 import com.github.kuzmin.web.user.UserTestData;
 import org.junit.jupiter.api.AfterEach;
@@ -52,15 +53,16 @@ class VoteControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = UserTestData.USER_MAIL)
+    @WithUserDetails(value = UserTestData.ANOTHER_USER_MAIL)
     void voteFirstTime() throws Exception {
         mutableClock.add(1L, ChronoUnit.DAYS);
         ResultActions actions = perform(MockMvcRequestBuilders.post(REST_URL)
-                .param("restaurantId", Integer.toString(RESTAURANT1_ID)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(VoteTestData.getEarlyVote(restaurant1.getId()))))
                 .andDo(print())
                 .andExpect(status().isOk());
         VoteTo created = VOTE_TO_MATCHER.readFromJson(actions);
-        VOTE_TO_MATCHER.assertMatch(VoteTo.fromEntity(repository.getUserVoteByDate(timeProvider.getCurrentDate(), UserTestData.USER_ID).get()), created);
+        VOTE_TO_MATCHER.assertMatch(VoteTo.fromEntity(repository.getUserVoteByDate(timeProvider.getCurrentDate(), UserTestData.ANOTHER_USER_ID).get()), created);
     }
 
     @Test
@@ -88,10 +90,27 @@ class VoteControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = UserTestData.USER_MAIL)
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     void changeVoteBeforeDeadLine() throws Exception {
-        Vote changeVote = getEarlyVote();
+        Vote changeVote = getChangeVote();
         changeVote.setRestaurant(restaurant1);
         ResultActions actions = perform(MockMvcRequestBuilders.put(REST_URL)
-                .param("restaurantId", Integer.toString(RESTAURANT1_ID)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(VoteTo.fromEntity(changeVote))))
+                .andDo(print())
+                .andExpect(status().isOk());
+        VoteTo created = VOTE_TO_MATCHER.readFromJson(actions);
+        VOTE_TO_MATCHER.assertMatch(created, VoteTo.fromEntity(changeVote));
+    }
+
+    @Test
+    @WithUserDetails(value = UserTestData.USER_MAIL)
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    void changeVoteForTomorrowVote() throws Exception {
+        Vote changeVote = getChangeVote();
+        changeVote.setVoteDate(LocalDate.of(2024, 1, 31));
+        changeVote.setRestaurant(restaurant1);
+        ResultActions actions = perform(MockMvcRequestBuilders.put(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(VoteTo.fromEntity(changeVote))))
                 .andDo(print())
                 .andExpect(status().isOk());
         VoteTo created = VOTE_TO_MATCHER.readFromJson(actions);
@@ -103,8 +122,11 @@ class VoteControllerTest extends AbstractControllerTest {
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     void voteAfterDeadLine() throws Exception {
         mutableClock.add(3L, ChronoUnit.HOURS);
+        Vote changeVote = getChangeVote();
+        changeVote.setRestaurant(restaurant1);
         perform(MockMvcRequestBuilders.put(REST_URL)
-                .param("restaurantId", Integer.toString(RESTAURANT1_ID)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(VoteTo.fromEntity(changeVote))))
                 .andDo(print())
                 .andExpect(status().isConflict());
     }
@@ -112,10 +134,10 @@ class VoteControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = UserTestData.GUEST_MAIL)
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    void voteFirstTimeForbidden() throws Exception {
-        mutableClock.add(1L, ChronoUnit.DAYS);
+    void voteNoRoleForbidden() throws Exception {
         perform(MockMvcRequestBuilders.post(REST_URL)
-                .param("restaurantId", Integer.toString(RESTAURANT1_ID)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(VoteTestData.getEarlyVote(restaurant1.getId()))))
                 .andDo(print())
                 .andExpect(status().isForbidden());
     }

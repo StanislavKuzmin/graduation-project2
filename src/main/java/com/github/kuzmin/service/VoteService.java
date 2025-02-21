@@ -10,7 +10,7 @@ import java.util.List;
 public interface VoteService {
     List<RestaurantVoteTo> getAllVoteForRestaurantsByDate(LocalDate date);
     RestaurantVoteTo getVoteForRestaurantByDate(LocalDate date, int restaurantId);
-    VoteTo vote(int restaurantId, int userId);
-    VoteTo changeVote(int restaurantId, int userId);
+    VoteTo vote(int restaurantId, int userId, LocalDate date);
+    VoteTo changeVote(int restaurantId, int userId, LocalDate date);
     UserVoteTo getUserVoteByDate(LocalDate date, int userId);
 }

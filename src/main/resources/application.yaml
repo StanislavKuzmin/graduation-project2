@@ -6,7 +6,7 @@ spring:
     # https://stackoverflow.com/a/67678945/548473
     defer-datasource-initialization: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       #  http://docs.jboss.org/hibernate/orm/5.3/userguide/html_single/Hibernate_User_Guide.html#configurations
       hibernate:
@@ -21,6 +21,10 @@ spring:
     #    tcp: jdbc:h2:tcp://localhost:9092/mem:voting
     username: sa
     password:
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
 
   # Jackson Serialization Issue Resolver
   jackson:
@@ -32,8 +36,9 @@ spring:
 
   # https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-application-properties.html#common-application-properties-cache
   cache:
-    cache-names: users, restaurant
-    caffeine.spec: maximumSize=50,expireAfterAccess=60s
+    cache-names: users, restaurant, menu, votes
+    caffeine:
+      spec: maximumSize=50,expireAfterAccess=60s
 
 logging:
   level:

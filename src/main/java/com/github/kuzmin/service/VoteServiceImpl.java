@@ -46,19 +46,16 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     public RestaurantVoteTo getVoteForRestaurantByDate(LocalDate date, int restaurantId) {
-        if (date.isAfter(timeProvider.getCurrentDate())) {
-            throw new DataConflictException("Date is after than current date");
-        }
         return RestaurantVoteTo.fromEntities(voteRepository.getRestaurantVotesByDate(restaurantId, date));
     }
 
     @Override
-    public VoteTo vote(int restaurantId, int userId) {
-        LocalDate date = timeProvider.getCurrentDate();
+    public VoteTo vote(int restaurantId, int userId, LocalDate date) {
+        checkIsDateBefore(date);
         Optional<Vote> optVote = voteRepository.getUserVoteByDate(date, userId);
-        Restaurant restaurant = checkNotFoundWithId(restaurantRepository.getReferenceById(restaurantId), restaurantId);
         if (optVote.isEmpty()) {
-            log.info("user with id={} first time vote for restaurant with id={}", userId, restaurantId);
+            Restaurant restaurant = checkNotFoundWithId(restaurantRepository.getReferenceById(restaurantId), restaurantId);
+            log.info("user with id={} first time vote for restaurant with id={} to date={}", userId, restaurantId, date);
             return fromEntity(voteRepository.save(new Vote(null, userRepository.getReferenceById(userId),
                     restaurant,
                     date)));
@@ -67,15 +64,15 @@ public class VoteServiceImpl implements VoteService {
     }
 
     @Override
-    public VoteTo changeVote(int restaurantId, int userId) {
-        if (timeProvider.getCurrentTime().isAfter(END_VOTE)) {
+    public VoteTo changeVote(int restaurantId, int userId, LocalDate date) {
+        checkIsDateBefore(date);
+        if (date.isEqual(timeProvider.getCurrentDate()) && timeProvider.getCurrentTime().isAfter(END_VOTE)) {
             throw new DataConflictException("You can't change your decision, because the time is more than 11.00");
         }
-        LocalDate date = timeProvider.getCurrentDate();
         Optional<Vote> optVote = voteRepository.getUserVoteByDate(date, userId);
-        Restaurant restaurant = checkNotFoundWithId(restaurantRepository.getReferenceById(restaurantId), restaurantId);
         if (optVote.isPresent()) {
-            log.info("user with id={} changed his voice for restaurant with id={}", userId, restaurantId);
+            Restaurant restaurant = checkNotFoundWithId(restaurantRepository.getReferenceById(restaurantId), restaurantId);
+            log.info("user with id={} changed his voice to restaurant with id={} to date={}", userId, restaurantId, date);
             Vote vote = optVote.get();
             vote.setRestaurant(restaurant);
             return fromEntity(voteRepository.save(vote));
@@ -87,5 +84,12 @@ public class VoteServiceImpl implements VoteService {
     public UserVoteTo getUserVoteByDate(LocalDate date, int userId) {
         Optional<Vote> optVote = voteRepository.getUserVoteByDate(date, userId);
         return optVote.map(UserVoteTo::fromEntity).orElse(null);
+    }
+
+    private void checkIsDateBefore(LocalDate date) {
+        LocalDate currentDate = timeProvider.getCurrentDate();
+        if (date.isBefore(currentDate)) {
+            throw new DataConflictException("Date is before than current date");
+        }
     }
 }

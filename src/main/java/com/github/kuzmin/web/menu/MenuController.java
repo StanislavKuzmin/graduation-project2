@@ -5,6 +5,8 @@ import com.github.kuzmin.service.MenuService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import com.github.kuzmin.to.MenuTo;
@@ -15,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = RestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@CacheConfig(cacheNames = {"menu"})
 @Slf4j
 @Tag(name = "Info about menu of restaurants", description = "Read information about menu of restaurants")
 @RequiredArgsConstructor
@@ -23,6 +26,7 @@ public class MenuController {
     private final TimeProvider timeProvider;
 
     @GetMapping("/menu/today")
+    @Cacheable
     public List<MenuTo> getTodayMenuAllRestaurant() {
         log.info("today menu for all restaurants");
         return menuService.getAllByDate(timeProvider.getCurrentDate());

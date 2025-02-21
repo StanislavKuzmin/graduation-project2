@@ -20,7 +20,11 @@ public class VoteTestData {
     public static final UserVoteTo anotherUserVoteToNow = new UserVoteTo(UsersUtil.createToWithoutPassword(UserTestData.another_user), RestaurantTo.fromEntity(RestaurantTestData.restaurant3), LocalDate.now());
     public static final UserVoteTo anotherUserVoteToPast = new UserVoteTo(UsersUtil.createToWithoutPassword(UserTestData.another_user), RestaurantTo.fromEntity(RestaurantTestData.restaurant1), LocalDate.of(2024, 1, 29));
 
-    public static Vote getEarlyVote() {
+    public static VoteTo getEarlyVote(int restaurantId) {
+        return new VoteTo(LocalDate.of(2024, 1, 31), restaurantId);
+    }
+
+    public static Vote getChangeVote() {
         return new Vote(30, UserTestData.user, RestaurantTestData.restaurant2, LocalDate.of(2024, 1, 30));
     }
 

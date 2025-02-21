@@ -9,6 +9,7 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static com.github.kuzmin.web.vote.VoteTestData.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -21,6 +22,7 @@ class UserVoteControllerTest extends AbstractControllerTest {
     void getVoteToday() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "today"))
                 .andExpect(status().isOk())
+                .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(USER_VOTE_TO_MATCHER.contentJson(anotherUserVoteToNow));
     }
@@ -31,6 +33,7 @@ class UserVoteControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "history")
                 .param("date", "2024-01-29"))
                 .andExpect(status().isOk())
+                .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(USER_VOTE_TO_MATCHER.contentJson(anotherUserVoteToPast));
     }
@@ -40,6 +43,7 @@ class UserVoteControllerTest extends AbstractControllerTest {
     void getNotVoteToday() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "today"))
                 .andExpect(status().isOk())
+                .andDo(print())
                 .andExpect(content().string(""));
     }
 }

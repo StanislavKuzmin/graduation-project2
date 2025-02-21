@@ -1,6 +1,8 @@
 package com.github.kuzmin.web.restaurant;
 
 import com.github.kuzmin.model.Restaurant;
+import com.github.kuzmin.repository.RestaurantRepository;
+import com.github.kuzmin.to.RestaurantTo;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,8 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.github.kuzmin.repository.RestaurantRepository;
-import com.github.kuzmin.to.RestaurantTo;
 
 import java.util.List;
 
@@ -31,7 +31,6 @@ public class RestaurantController {
     private final RestaurantRepository restaurantRepository;
 
     @GetMapping
-    @Cacheable
     public List<RestaurantTo> getAll() {
         log.info("getAll");
         return restaurantRepository.findAll().stream().map(RestaurantTo::fromEntity).toList();

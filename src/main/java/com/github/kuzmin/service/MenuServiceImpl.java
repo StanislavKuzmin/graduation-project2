@@ -32,9 +32,7 @@ public class MenuServiceImpl implements MenuService {
     @Override
     @Transactional
     public MenuItem addToMenuByFutureDate(LocalDate date, int dishId, int restaurantId) {
-        if (isDateAfterOrEqual(date)) {
-            throw new DataConflictException("Date is before than current date");
-        }
+        checkIsDateBefore(date);
         if (menuRepository.existsByMenu(dishId, date, restaurantId)) {
             return null;
         }
@@ -46,9 +44,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public void deleteFromMenuByFutureDate(LocalDate date, int dishId, int restaurantId) {
-        if (isDateAfterOrEqual(date)) {
-            throw new DataConflictException("Date is before than current date");
-        }
+        checkIsDateBefore(date);
         checkNotFoundWithId(menuRepository.delete(dishId, restaurantId, date) != 0, dishId);
     }
 
@@ -74,8 +70,10 @@ public class MenuServiceImpl implements MenuService {
                 .get();
     }
 
-    private boolean isDateAfterOrEqual(LocalDate date) {
+    private void checkIsDateBefore(LocalDate date) {
         LocalDate currentDate = timeProvider.getCurrentDate();
-        return !date.isAfter(currentDate) && !date.isEqual(currentDate);
+        if (date.isBefore(currentDate)) {
+            throw new DataConflictException("Date is before than current date");
+        }
     }
 }

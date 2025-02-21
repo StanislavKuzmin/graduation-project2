@@ -39,7 +39,7 @@ public class AdminRestaurantController {
         binder.addValidators(validator);
     }
 
-    @CacheEvict(allEntries = true)
+    @CacheEvict(key = "#id")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
@@ -47,7 +47,7 @@ public class AdminRestaurantController {
         restaurantRepository.deleteExisted(id);
     }
 
-    @CacheEvict(allEntries = true)
+    @CacheEvict(key = "#id")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@RequestBody @Valid RestaurantTo restaurantTo, @PathVariable int id) {
